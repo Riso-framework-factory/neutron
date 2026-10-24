@@ -256,7 +256,7 @@ fn doctor_command(root: &Path, arguments: DoctorArgs) -> Result<ExitCode> {
             .status()
             .context("running cargo")?;
         if !status.success() {
-            println!("doctor: cargo check ({label}) failed");
+            println!("doctor: cargo check ({label}) failed: {status}");
             return Ok(ExitCode::FAILURE);
         }
     }
