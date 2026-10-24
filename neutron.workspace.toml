@@ -1,0 +1,10 @@
+# Neutron-owned additions merged by `cargo neutron sync` into files generated from upstream.
+# Tables merge recursively, arrays gain the entries they lack, other values replace upstream's.
+
+# Merged into the root Cargo.toml.
+[manifest.workspace]
+exclude = ["tooling/neutron_cli"]
+
+# Merged into .cargo/config.toml.
+[cargo-config.alias]
+neutron = "run --quiet --manifest-path tooling/neutron_cli/Cargo.toml --"

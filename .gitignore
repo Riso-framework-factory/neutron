@@ -1,0 +1,10 @@
+**/target
+**/cargo-target
+**/*.db
+**/*.proptest-regressions
+.DS_Store
+.idea
+.vscode
+.claude/settings.local.json
+/assets/*licenses.*
+/sync-report.md

@@ -1,0 +1,96 @@
+# Opens (or updates) one rolling pull request that brings zed-industries/zed into Neutron.
+# This is the only workflow (docs/adr/0005-no-ci.md): it never merges; a maintainer runs
+# `cargo neutron doctor` locally and merges by hand.
+name: upstream-sync
+
+on:
+  schedule:
+    - cron: "17 1 * * *"
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Upstream ref to sync (branch, tag or sha)"
+        default: "main"
+      compile_check:
+        description: "Run cargo check on core and riso after syncing"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: upstream-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: neutron
+
+      # Blobless, so later 3-way merges can read the previously synced commit.
+      - name: Clone upstream
+        env:
+          REF: ${{ inputs.ref || 'main' }}
+        run: |
+          git clone --filter=blob:none --no-checkout https://github.com/zed-industries/zed.git upstream
+          git -C upstream checkout --detach "$REF"
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: neutron/tooling/neutron_cli
+
+      - id: sync
+        working-directory: neutron
+        run: cargo neutron sync --upstream ../upstream --report ../sync-report.md --github-output "$GITHUB_OUTPUT"
+
+      - id: verify
+        working-directory: neutron
+        continue-on-error: true
+        run: cargo neutron verify --upstream ../upstream --append-report ../sync-report.md
+
+      - id: check
+        if: inputs.compile_check || vars.NEUTRON_SYNC_COMPILE_CHECK == 'true'
+        working-directory: neutron
+        continue-on-error: true
+        run: |
+          packages="$(cargo neutron members core shim riso)"
+          if [ -z "$packages" ]; then
+            echo "No core or riso crates yet; nothing to check."
+            exit 0
+          fi
+          ./apps/ide/script/linux
+          # Word splitting is intended: $packages is a list of `-p <crate>` arguments.
+          # shellcheck disable=SC2086
+          cargo check $packages
+
+      - id: labels
+        env:
+          VERIFY: ${{ steps.verify.outcome }}
+          CHECK: ${{ steps.check.outcome }}
+          CONFLICTS: ${{ steps.sync.outputs.conflicts }}
+          TRIAGE: ${{ steps.sync.outputs.triage }}
+        run: |
+          labels="upstream-sync"
+          if [ "$VERIFY" != "success" ] || [ "$TRIAGE" = "true" ]; then labels="$labels,sync-triage"; fi
+          if [ "$CONFLICTS" = "true" ]; then labels="$labels,sync-conflict"; fi
+          if [ "$CHECK" = "failure" ]; then labels="$labels,sync-build-broken"; fi
+          echo "labels=$labels" >> "$GITHUB_OUTPUT"
+
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          path: neutron
+          branch: sync/upstream
+          title: "sync: zed@${{ steps.sync.outputs.short_sha }}"
+          commit-message: |
+            sync: zed@${{ steps.sync.outputs.short_sha }}
+
+            Upstream-Commit: ${{ steps.sync.outputs.sha }}
+          body-path: sync-report.md
+          labels: ${{ steps.labels.outputs.labels }}
+          draft: ${{ steps.sync.outputs.conflicts == 'true' }}

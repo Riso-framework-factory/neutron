@@ -1,0 +1,68 @@
+# Where every upstream Zed path goes in Neutron. `cargo neutron sync` reads this file; the
+# porting plan describes how crates move from `apps/ide` into `core` in closed batches.
+
+[upstream]
+repo = "https://github.com/zed-industries/zed"
+ref = "main"
+# Written by `cargo neutron sync`.
+commit = ""
+commit_date = ""
+
+[layout]
+# Destination of every upstream path that no rule below maps: the IDE canary.
+ide = "apps/ide"
+# Never copied. The root manifest, `.cargo/config.toml` and agent rules are generated from
+# upstream instead; `.github` holds Zed's own workflows.
+exclude = [
+    ".github",
+    "Cargo.toml",
+    "Cargo.lock",
+    ".cargo/config.toml",
+    ".agents",
+    ".factory",
+    ".rules",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "GEMINI.md",
+]
+# Exist at the Neutron root but are never written or cleaned by the sync.
+unmanaged = [".git"]
+
+# Upstream paths copied to the Neutron root instead of `apps/ide/`. `assets/` must sit at the
+# root: crates refer to it as `../../assets` and debug builds read it from the repository root.
+[layout.root]
+"assets" = "assets"
+".cargo" = ".cargo"
+".config" = ".config"
+"rust-toolchain.toml" = "rust-toolchain.toml"
+"rustfmt.toml" = "rustfmt.toml"
+"clippy.toml" = "clippy.toml"
+"tooling/compliance" = "tooling/compliance"
+"tooling/lints" = "tooling/lints"
+"tooling/xtask" = "tooling/xtask"
+
+[core]
+# Upstream packages copied verbatim to `core/<directory>`.
+crates = []
+
+[policy]
+# Dev-dependencies of core crates that may point outside core, as "from -> to".
+allow_core_dev_deps = ["markdown -> languages"]
+
+# Literals the path fixer cannot find by itself: paths resolved against the current directory,
+# or targets that are not tracked upstream.
+[[rewrite.literals]]
+file = "crates/zed/src/main.rs"
+literal = "crates/grammars/src"
+base = "root"
+
+[[rewrite.literals]]
+file = "crates/zed/build.rs"
+literal = "../../.git/logs/HEAD"
+base = "crate"
+
+[agents]
+sections = ["Rust coding guidelines", "Timers in tests", "GPUI", "Rules Hygiene"]
+# Zed's PR review workflow asks agents to edit README.md on every change; it does not apply here.
+drop_lines_containing = ["Remove this line to confirm you've reviewed this PR"]
+skills = ["gpui-test", "gpui-bench", "lint-creator"]
