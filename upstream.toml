@@ -61,6 +61,12 @@ crates = [
     "schema_generator", "settings", "settings_content", "settings_json", "settings_macros",
     "sqlez", "sqlez_macros", "telemetry", "telemetry_events", "text", "theme_importer",
     "theme_settings", "vim_mode_setting", "zed_env_vars", "zeta_prompt", "zlog_settings",
+    # B4: platform services.
+    "assets", "audio", "aws_http_client", "crashes", "credentials_provider", "feature_flags",
+    "feature_flags_macros", "fuzzy", "fuzzy_nucleo", "hang_telemetry", "html_to_markdown",
+    "http_proxy", "node_runtime", "oauth_callback_server", "proxy_handshake", "session",
+    "shell_command_parser", "snippet", "streaming_diff", "system_specs", "time_format", "watch",
+    "windows_resources", "zed_actions", "zed_credentials_provider",
 ]
 
 # Riso crates that keep an upstream crate's name and replace it everywhere. The first sync copies

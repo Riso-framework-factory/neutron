@@ -9,7 +9,7 @@ use gpui::{App, AssetSource, Result, SharedString};
 // `util::fs_embed!`.
 util::fs_embed! {
     pub struct Assets,
-    crate_relative = "../../../../assets",
+    crate_relative = "../../assets",
     root_relative = "assets",
     include = [
         "fonts/**/*",
