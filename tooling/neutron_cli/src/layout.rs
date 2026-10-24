@@ -11,6 +11,9 @@ pub enum Destination {
     Root,
     /// Mirrored into the IDE canary; relative paths are fixed up.
     Ide,
+    /// A Neutron-owned crate in `riso/` that keeps the upstream name; upstream changes are
+    /// 3-way merged into it instead of being copied.
+    Shim,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -37,10 +40,37 @@ impl Layout {
     pub fn new(config: &Config, upstream: &Upstream) -> Result<Self> {
         let mut rules = Vec::new();
         let mut core_destinations: HashMap<String, String> = HashMap::new();
+        let mut core_packages = Vec::new();
         for name in &config.core.crates {
             let Some(package) = upstream.package_named(name) else {
                 bail!("core crate `{name}` in upstream.toml is not an upstream workspace package");
             };
+            core_packages.push(package);
+        }
+        for package in &core_packages {
+            // A package nested in another package's directory moves with its parent.
+            let Some(parent) = upstream
+                .package_containing(parent_path(&package.dir))
+                .filter(|parent| parent.dir != package.dir)
+            else {
+                continue;
+            };
+            if !core_packages.iter().any(|core| core.dir == parent.dir) {
+                bail!(
+                    "core crate `{}` lives inside `{}`, which is not in core; move them together",
+                    package.name,
+                    parent.name
+                );
+            }
+        }
+        for package in core_packages {
+            let nested = upstream
+                .package_containing(parent_path(&package.dir))
+                .is_some_and(|parent| parent.dir != package.dir);
+            if nested {
+                continue;
+            }
+            let name = &package.name;
             // Keep the directory name rather than the package name: sibling references such as
             // `../gpui` use directory names.
             let directory_name = package.dir.rsplit('/').next().unwrap_or(&package.dir);
@@ -52,6 +82,20 @@ impl Layout {
                 from: package.dir.clone(),
                 to: destination,
                 destination: Destination::Core,
+            });
+        }
+        for (name, shim) in &config.shim {
+            let directory_name = shim.origin.rsplit('/').next().unwrap_or(&shim.origin);
+            if directory_name != name {
+                bail!(
+                    "shim `{name}` must keep the directory name of its origin `{}`",
+                    shim.origin
+                );
+            }
+            rules.push(Rule {
+                from: shim.origin.clone(),
+                to: format!("riso/{directory_name}"),
+                destination: Destination::Shim,
             });
         }
         for (from, to) in &config.layout.root {
@@ -66,6 +110,7 @@ impl Layout {
         let ide_root = config.layout.ide.trim_end_matches('/').to_string();
         for managed in rules
             .iter()
+            .filter(|rule| rule.destination != Destination::Shim)
             .map(|rule| rule.to.as_str())
             .chain([ide_root.as_str()])
         {
@@ -129,7 +174,12 @@ impl Layout {
 
     /// Neutron directories whose whole content is owned by the sync.
     pub fn managed_roots(&self) -> Vec<String> {
-        let mut roots: Vec<String> = self.rules.iter().map(|rule| rule.to.clone()).collect();
+        let mut roots: Vec<String> = self
+            .rules
+            .iter()
+            .filter(|rule| rule.destination != Destination::Shim)
+            .map(|rule| rule.to.clone())
+            .collect();
         roots.push(self.ide_root.clone());
         roots
     }

@@ -3,6 +3,7 @@ use crate::config::{CONFIG_FILE, Config, OVERLAY_FILE};
 use crate::layout::{Destination, Layout, strip_path_prefix};
 use crate::manifest::{self, Overlay};
 use crate::rewrite::{PathFixer, Rewrite};
+use crate::shim;
 use crate::upstream::{FileKind, Upstream};
 use anyhow::{Context as _, Result, bail};
 use std::collections::{BTreeMap, BTreeSet};
@@ -14,7 +15,7 @@ use walkdir::WalkDir;
 const PRESERVED_NAMES: &[&str] = &["target", "node_modules", ".DS_Store"];
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-enum Entry {
+pub enum Entry {
     File { content: Vec<u8>, executable: bool },
     Symlink { target: String },
 }
@@ -42,6 +43,8 @@ pub struct SyncOutcome {
     pub changes: Vec<Change>,
     pub rewrites: Vec<Rewrite>,
     pub warnings: Vec<String>,
+    /// Shim files left with conflict markers or needing a decision.
+    pub conflicts: Vec<String>,
 }
 
 pub fn run(
@@ -63,12 +66,15 @@ pub fn run(
         let Some(mapped) = layout.map(&file.path) else {
             continue;
         };
+        if mapped.destination == Destination::Shim {
+            continue;
+        }
         let entry = match file.kind {
             FileKind::Symlink => {
                 let target = upstream.read_link(&file.path)?;
                 let target = match mapped.destination {
                     Destination::Core => target,
-                    Destination::Root | Destination::Ide => {
+                    Destination::Root | Destination::Ide | Destination::Shim => {
                         fixer.fix_symlink(&file.path, &target).unwrap_or(target)
                     }
                 };
@@ -207,10 +213,21 @@ pub fn run(
         }
     }
 
+    let mut conflicts = Vec::new();
+    for (name, shim_config) in &config.shim {
+        let merged = shim::merge(root, upstream, name, shim_config, dry_run)?;
+        changes.extend(merged.changes);
+        conflicts.extend(merged.conflicts);
+        if !dry_run && let Some(new_base) = merged.new_base {
+            Config::record_shim_base(root, name, &new_base)?;
+        }
+    }
+
     Ok(SyncOutcome {
         changes,
         rewrites,
         warnings,
+        conflicts,
     })
 }
 
@@ -227,7 +244,7 @@ fn add_entry(
     Ok(())
 }
 
-fn needs_write(path: &Path, entry: &Entry) -> Result<bool> {
+pub fn needs_write(path: &Path, entry: &Entry) -> Result<bool> {
     let Ok(metadata) = fs::symlink_metadata(path) else {
         return Ok(true);
     };
@@ -256,7 +273,7 @@ fn needs_write(path: &Path, entry: &Entry) -> Result<bool> {
     }
 }
 
-fn write_entry(path: &Path, entry: &Entry) -> Result<()> {
+pub fn write_entry(path: &Path, entry: &Entry) -> Result<()> {
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent).with_context(|| format!("creating {}", parent.display()))?;
     }
@@ -346,13 +363,13 @@ fn remove_empty_directories(directory: &Path) -> Result<()> {
 }
 
 #[cfg(unix)]
-fn is_executable(metadata: &fs::Metadata) -> bool {
+pub fn is_executable(metadata: &fs::Metadata) -> bool {
     use std::os::unix::fs::PermissionsExt as _;
     metadata.permissions().mode() & 0o111 != 0
 }
 
 #[cfg(not(unix))]
-fn is_executable(_metadata: &fs::Metadata) -> bool {
+pub fn is_executable(_metadata: &fs::Metadata) -> bool {
     false
 }
 

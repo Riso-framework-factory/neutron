@@ -166,7 +166,9 @@ impl<'a> PathFixer<'a> {
             }
             // Relative literals like "../.." name an ancestor of the file and are almost always
             // test data. Root-relative literals legitimately name the file's own crate.
-            if target.is_empty() || (base != LiteralBase::Root && strip_path_prefix(file, &target).is_some()) {
+            if target.is_empty()
+                || (base != LiteralBase::Root && strip_path_prefix(file, &target).is_some())
+            {
                 return None;
             }
         }

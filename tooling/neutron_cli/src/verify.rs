@@ -103,6 +103,7 @@ pub fn run(
     }
 
     check_conflict_markers(root, &mut findings)?;
+    check_modification_headers(root, config, upstream, &mut findings)?;
     Ok(findings)
 }
 
@@ -117,6 +118,7 @@ fn check_core_paths(
     let core_directories: Vec<&str> = layout.core_crates().map(|(from, _)| from).collect();
     for file in &upstream.files {
         if !PathFixer::applies_to(&file.path)
+            || config.policy.allow_core_path_escapes.contains(&file.path)
             || !core_directories
                 .iter()
                 .any(|directory| strip_path_prefix(&file.path, directory).is_some())
@@ -163,12 +165,14 @@ fn check_dependency_direction(
             };
             let is_dev = dependency.kind.as_deref() == Some("dev");
             let allowed = match package.group {
-                Group::Core | Group::Shim => {
+                Group::Core => {
                     matches!(target.group, Group::Core | Group::Shim)
                         || (is_dev
                             && allowed_dev
                                 .contains(&(package.name.clone(), dependency.name.clone())))
                 }
+                // Shims may use small riso crates such as `riso_identity`.
+                Group::Shim => matches!(target.group, Group::Core | Group::Shim | Group::Riso),
                 Group::Riso | Group::Crate | Group::Apps => target.group != Group::Ide,
                 Group::Ide | Group::Tooling | Group::Other => true,
             };
@@ -219,6 +223,50 @@ fn check_classification(
             });
         }
     }
+}
+
+pub const MODIFICATION_HEADER: &str = "Modified from Zed";
+
+/// V7: shim source files that differ from upstream say so near the top (GPLv3 section 5(a)).
+fn check_modification_headers(
+    root: &Path,
+    config: &Config,
+    upstream: &Upstream,
+    findings: &mut Vec<Finding>,
+) -> Result<()> {
+    for (name, shim) in &config.shim {
+        if shim.base.is_empty() {
+            continue;
+        }
+        for upstream_path in upstream.files_at(&shim.base, &shim.origin)? {
+            if !upstream_path.ends_with(".rs") {
+                continue;
+            }
+            let rest = strip_path_prefix(&upstream_path, &shim.origin).unwrap_or(&upstream_path);
+            let path = root.join("riso").join(name).join(rest);
+            let Ok(ours) = fs::read(&path) else {
+                continue;
+            };
+            if upstream.read_at(&shim.base, &upstream_path)?.as_deref() == Some(ours.as_slice()) {
+                continue;
+            }
+            let text = String::from_utf8_lossy(&ours);
+            if !text
+                .lines()
+                .take(10)
+                .any(|line| line.contains(MODIFICATION_HEADER))
+            {
+                findings.push(Finding {
+                    code: "V7",
+                    message: format!(
+                        "{} differs from upstream but has no \"{MODIFICATION_HEADER} ...\" header in its first lines",
+                        path.display()
+                    ),
+                });
+            }
+        }
+    }
+    Ok(())
 }
 
 /// V4: unresolved merge conflicts in `riso/`.

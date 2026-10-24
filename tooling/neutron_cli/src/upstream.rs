@@ -124,6 +124,43 @@ impl Upstream {
             .ok()
             .and_then(|count| count.trim().parse().ok())
     }
+
+    /// Contents of `path` at `commit`, or `None` if it did not exist there.
+    pub fn read_at(&self, commit: &str, path: &str) -> Result<Option<Vec<u8>>> {
+        let spec = format!("{commit}:{path}");
+        let output = Command::new("git")
+            .arg("-C")
+            .arg(&self.root)
+            .args(["cat-file", "blob", &spec])
+            .output()
+            .with_context(|| format!("running git cat-file blob {spec}"))?;
+        Ok(output.status.success().then_some(output.stdout))
+    }
+
+    /// Files under `directory` at `commit`.
+    pub fn files_at(&self, commit: &str, directory: &str) -> Result<Vec<String>> {
+        let listing = git(
+            &self.root,
+            &[
+                "ls-tree",
+                "-r",
+                "-z",
+                "--name-only",
+                commit,
+                "--",
+                directory,
+            ],
+        )?;
+        Ok(listing
+            .split('\0')
+            .filter(|path| !path.is_empty())
+            .map(str::to_string)
+            .collect())
+    }
+
+    pub fn tracked_file(&self, path: &str) -> Option<&TrackedFile> {
+        self.files.iter().find(|file| file.path == path)
+    }
 }
 
 pub fn git(root: &Path, args: &[&str]) -> Result<String> {

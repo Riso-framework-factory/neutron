@@ -19,6 +19,18 @@ pub struct Config {
     pub rewrite: RewriteSection,
     #[serde(default)]
     pub agents: AgentsSection,
+    /// Crates in `riso/` that keep an upstream crate's name and replace it everywhere.
+    #[serde(default)]
+    pub shim: BTreeMap<String, ShimSection>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct ShimSection {
+    /// Upstream directory the shim was derived from.
+    pub origin: String,
+    /// Upstream commit whose `origin` the shim's files were last merged with.
+    #[serde(default)]
+    pub base: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -56,6 +68,9 @@ pub struct PolicySection {
     /// Dev-dependencies of core crates that may point outside core, as `"from -> to"`.
     #[serde(default)]
     pub allow_core_dev_deps: Vec<String>,
+    /// Upstream files in core whose out-of-crate paths are known not to resolve in Neutron.
+    #[serde(default)]
+    pub allow_core_path_escapes: Vec<String>,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -104,6 +119,25 @@ impl Config {
         let text =
             fs::read_to_string(&path).with_context(|| format!("reading {}", path.display()))?;
         toml::from_str(&text).with_context(|| format!("parsing {}", path.display()))
+    }
+
+    /// Records the upstream commit a shim was last merged with.
+    pub fn record_shim_base(root: &Path, shim: &str, base: &str) -> Result<()> {
+        let path = root.join(CONFIG_FILE);
+        let text =
+            fs::read_to_string(&path).with_context(|| format!("reading {}", path.display()))?;
+        let mut document = text
+            .parse::<toml_edit::DocumentMut>()
+            .with_context(|| format!("parsing {}", path.display()))?;
+        let table = document["shim"][shim]
+            .as_table_mut()
+            .with_context(|| format!("`[shim.{shim}]` must be a table"))?;
+        set_string_keeping_decor(table, "base", base);
+        let updated = document.to_string();
+        if updated != text {
+            fs::write(&path, updated).with_context(|| format!("writing {}", path.display()))?;
+        }
+        Ok(())
     }
 
     /// Records the synced upstream commit in `upstream.toml`, keeping its comments and layout.

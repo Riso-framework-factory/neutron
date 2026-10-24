@@ -7,6 +7,7 @@ mod config;
 mod layout;
 mod manifest;
 mod rewrite;
+mod shim;
 mod sync;
 mod upstream;
 mod verify;
@@ -145,6 +146,9 @@ fn sync_command(root: &Path, arguments: SyncArgs) -> Result<ExitCode> {
     for warning in &outcome.warnings {
         eprintln!("warning: {warning}");
     }
+    for conflict in &outcome.conflicts {
+        eprintln!("conflict: {conflict}");
+    }
 
     if let Some(path) = &arguments.report {
         let report = sync_report(&config, &upstream, &previous_commit, &outcome)?;
@@ -155,7 +159,7 @@ fn sync_command(root: &Path, arguments: SyncArgs) -> Result<ExitCode> {
         writeln!(output, "sha={}", upstream.commit)?;
         writeln!(output, "short_sha={}", upstream.short_commit())?;
         writeln!(output, "changed={}", !outcome.changes.is_empty())?;
-        writeln!(output, "conflicts=false")?;
+        writeln!(output, "conflicts={}", !outcome.conflicts.is_empty())?;
         writeln!(output, "triage={}", !outcome.warnings.is_empty())?;
         append(path, &output)?;
     }
@@ -262,6 +266,12 @@ fn sync_report(
         .collect();
     writeln!(report, "- Core files changed: {}", core_changes.len())?;
 
+    if !outcome.conflicts.is_empty() {
+        writeln!(report, "\n## Shim conflicts\n")?;
+        for conflict in &outcome.conflicts {
+            writeln!(report, "- {conflict}")?;
+        }
+    }
     if !outcome.warnings.is_empty() {
         writeln!(report, "\n## Needs triage\n")?;
         for warning in &outcome.warnings {
