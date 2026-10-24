@@ -167,7 +167,12 @@ fn merge_item(target: &mut Item, overlay: &Item) {
                     .iter()
                     .any(|existing| existing.to_string().trim() == rendered.trim());
                 if !already_present {
+                    // Lay new entries out like the last existing one (upstream puts one per line).
+                    let decor = target.iter().last().map(|last| last.decor().clone());
                     target.push(value.clone());
+                    if let (Some(decor), Some(pushed)) = (decor, target.iter_mut().last()) {
+                        *pushed.decor_mut() = decor;
+                    }
                 }
             }
         }
