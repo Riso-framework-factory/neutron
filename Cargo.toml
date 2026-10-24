@@ -16,7 +16,7 @@ members = [
     "apps/ide/crates/agent_ui_benchmarks",
     "apps/ide/crates/ai_onboarding",
     "apps/ide/crates/anthropic",
-    "apps/ide/crates/askpass",
+    "core/askpass",
     "apps/ide/crates/assets",
     "apps/ide/crates/audio",
     "apps/ide/crates/auto_update",
@@ -33,10 +33,10 @@ members = [
     "apps/ide/crates/channel",
     "apps/ide/crates/cli",
     "apps/ide/crates/client",
-    "apps/ide/crates/clock",
+    "core/clock",
     "apps/ide/crates/cloud_api_client",
     "apps/ide/crates/cloud_api_types",
-    "apps/ide/crates/cloud_llm_client",
+    "core/cloud_llm_client",
     "apps/ide/crates/codestral",
     "apps/ide/crates/collab",
     "apps/ide/crates/collab_ui",
@@ -52,7 +52,7 @@ members = [
     "apps/ide/crates/credentials_provider",
     "apps/ide/crates/dap",
     "apps/ide/crates/dap_adapters",
-    "apps/ide/crates/db",
+    "core/db",
     "apps/ide/crates/debug_adapter_extension",
     "apps/ide/crates/debugger_tools",
     "apps/ide/crates/debugger_ui",
@@ -69,7 +69,7 @@ members = [
     "apps/ide/crates/editor",
     "apps/ide/crates/editor_benchmarks",
     "apps/ide/crates/encoding_selector",
-    "apps/ide/crates/env_var",
+    "core/env_var",
     "apps/ide/crates/etw_tracing",
     "apps/ide/crates/eval_cli",
     "apps/ide/crates/eval_utils",
@@ -83,14 +83,14 @@ members = [
     "apps/ide/crates/feature_flags",
     "apps/ide/crates/feature_flags_macros",
     "apps/ide/crates/feedback",
-    "apps/ide/crates/file_content",
+    "core/file_content",
     "apps/ide/crates/file_finder",
-    "apps/ide/crates/file_icons",
-    "apps/ide/crates/fs",
-    "apps/ide/crates/fs_benchmarks",
+    "core/file_icons",
+    "core/fs",
+    "core/fs_benchmarks",
     "apps/ide/crates/fuzzy",
     "apps/ide/crates/fuzzy_nucleo",
-    "apps/ide/crates/git",
+    "core/git",
     "apps/ide/crates/git_hosting_providers",
     "apps/ide/crates/git_ui",
     "apps/ide/crates/git_ui_core",
@@ -128,7 +128,7 @@ members = [
     "apps/ide/crates/language_detection",
     "apps/ide/crates/language_extension",
     "apps/ide/crates/language_model",
-    "apps/ide/crates/language_model_core",
+    "core/language_model_core",
     "apps/ide/crates/language_models",
     "apps/ide/crates/language_models_cloud",
     "apps/ide/crates/language_onboarding",
@@ -147,11 +147,11 @@ members = [
     "apps/ide/crates/markdown_preview",
     "core/menu",
     "core/mermaid_render",
-    "apps/ide/crates/migrator",
+    "core/migrator",
     "apps/ide/crates/miniprofiler_ui",
     "apps/ide/crates/mistral",
     "apps/ide/crates/multi_buffer",
-    "apps/ide/crates/net",
+    "core/net",
     "apps/ide/crates/node_runtime",
     "apps/ide/crates/notifications",
     "apps/ide/crates/oauth_callback_server",
@@ -165,7 +165,7 @@ members = [
     "apps/ide/crates/outline",
     "apps/ide/crates/outline_panel",
     "core/path",
-    "apps/ide/crates/paths",
+    "riso/paths",
     "apps/ide/crates/picker",
     "apps/ide/crates/picker_preview",
     "apps/ide/crates/platform_title_bar",
@@ -175,28 +175,28 @@ members = [
     "apps/ide/crates/project_panel",
     "apps/ide/crates/project_symbols",
     "apps/ide/crates/prompt_store",
-    "apps/ide/crates/proto",
+    "core/proto",
     "apps/ide/crates/proxy_handshake",
     "apps/ide/crates/recent_projects",
     "core/refineable",
     "core/refineable/derive_refineable",
-    "apps/ide/crates/release_channel",
+    "riso/release_channel",
     "apps/ide/crates/remote",
     "apps/ide/crates/remote_connection",
     "apps/ide/crates/remote_server",
     "apps/ide/crates/repl",
     "core/reqwest_client",
-    "apps/ide/crates/rope",
+    "core/rope",
     "apps/ide/crates/rpc",
     "apps/ide/crates/sandbox",
     "core/scheduler",
-    "apps/ide/crates/schema_generator",
+    "core/schema_generator",
     "apps/ide/crates/search",
     "apps/ide/crates/session",
-    "apps/ide/crates/settings",
-    "apps/ide/crates/settings_content",
-    "apps/ide/crates/settings_json",
-    "apps/ide/crates/settings_macros",
+    "core/settings",
+    "core/settings_content",
+    "core/settings_json",
+    "core/settings_macros",
     "apps/ide/crates/settings_profile_selector",
     "apps/ide/crates/settings_ui",
     "apps/ide/crates/shell_command_parser",
@@ -204,8 +204,8 @@ members = [
     "apps/ide/crates/snippet",
     "apps/ide/crates/snippet_provider",
     "apps/ide/crates/snippets_ui",
-    "apps/ide/crates/sqlez",
-    "apps/ide/crates/sqlez_macros",
+    "core/sqlez",
+    "core/sqlez_macros",
     "apps/ide/crates/streaming_diff",
     "core/sum_tree",
     "apps/ide/crates/svg_preview",
@@ -215,16 +215,16 @@ members = [
     "apps/ide/crates/tabular_data_preview",
     "apps/ide/crates/task",
     "apps/ide/crates/tasks_ui",
-    "apps/ide/crates/telemetry",
-    "apps/ide/crates/telemetry_events",
+    "core/telemetry",
+    "core/telemetry_events",
     "apps/ide/crates/terminal",
     "apps/ide/crates/terminal_view",
-    "apps/ide/crates/text",
+    "core/text",
     "core/theme",
     "apps/ide/crates/theme_extension",
-    "apps/ide/crates/theme_importer",
+    "core/theme_importer",
     "apps/ide/crates/theme_selector",
-    "apps/ide/crates/theme_settings",
+    "core/theme_settings",
     "apps/ide/crates/time_format",
     "apps/ide/crates/title_bar",
     "apps/ide/crates/toolchain_selector",
@@ -235,7 +235,7 @@ members = [
     "core/util",
     "core/util_macros",
     "apps/ide/crates/vim",
-    "apps/ide/crates/vim_mode_setting",
+    "core/vim_mode_setting",
     "apps/ide/crates/watch",
     "apps/ide/crates/web_search",
     "apps/ide/crates/web_search_providers",
@@ -249,10 +249,10 @@ members = [
     "apps/ide/crates/zed",
     "apps/ide/crates/zed_actions",
     "apps/ide/crates/zed_credentials_provider",
-    "apps/ide/crates/zed_env_vars",
-    "apps/ide/crates/zeta_prompt",
+    "core/zed_env_vars",
+    "core/zeta_prompt",
     "core/zlog",
-    "apps/ide/crates/zlog_settings",
+    "core/zlog_settings",
     "core/ztracing",
     "core/ztracing_macro",
 
@@ -272,6 +272,7 @@ members = [
     "tooling/compliance",
     "core/perf",
     "tooling/xtask",
+    "riso/identity",
 ]
 default-members = ["apps/ide/crates/zed"]
 exclude = ["tooling/neutron_cli"]
@@ -297,7 +298,7 @@ agent_skills = { path = "apps/ide/crates/agent_skills" }
 agent_ui = { path = "apps/ide/crates/agent_ui" }
 ai_onboarding = { path = "apps/ide/crates/ai_onboarding" }
 anthropic = { path = "apps/ide/crates/anthropic" }
-askpass = { path = "apps/ide/crates/askpass" }
+askpass = { path = "core/askpass" }
 assets = { path = "apps/ide/crates/assets" }
 audio = { path = "apps/ide/crates/audio" }
 bench_metrics = { path = "core/bench_metrics" }
@@ -312,10 +313,10 @@ call_hierarchy = { path = "apps/ide/crates/call_hierarchy" }
 channel = { path = "apps/ide/crates/channel" }
 cli = { path = "apps/ide/crates/cli", default-features = false }
 client = { path = "apps/ide/crates/client" }
-clock = { path = "apps/ide/crates/clock" }
+clock = { path = "core/clock" }
 cloud_api_client = { path = "apps/ide/crates/cloud_api_client" }
 cloud_api_types = { path = "apps/ide/crates/cloud_api_types" }
-cloud_llm_client = { path = "apps/ide/crates/cloud_llm_client" }
+cloud_llm_client = { path = "core/cloud_llm_client" }
 codestral = { path = "apps/ide/crates/codestral" }
 collab = { path = "apps/ide/crates/collab" }
 collab_ui = { path = "apps/ide/crates/collab_ui" }
@@ -333,7 +334,7 @@ crashes = { path = "apps/ide/crates/crashes" }
 credentials_provider = { path = "apps/ide/crates/credentials_provider" }
 dap = { path = "apps/ide/crates/dap" }
 dap_adapters = { path = "apps/ide/crates/dap_adapters" }
-db = { path = "apps/ide/crates/db" }
+db = { path = "core/db" }
 debug_adapter_extension = { path = "apps/ide/crates/debug_adapter_extension" }
 debugger_tools = { path = "apps/ide/crates/debugger_tools" }
 debugger_ui = { path = "apps/ide/crates/debugger_ui" }
@@ -348,7 +349,7 @@ edit_prediction_types = { path = "apps/ide/crates/edit_prediction_types" }
 edit_prediction_ui = { path = "apps/ide/crates/edit_prediction_ui" }
 editor = { path = "apps/ide/crates/editor" }
 encoding_selector = { path = "apps/ide/crates/encoding_selector" }
-env_var = { path = "apps/ide/crates/env_var" }
+env_var = { path = "core/env_var" }
 etw_tracing = { path = "apps/ide/crates/etw_tracing" }
 eval_utils = { path = "apps/ide/crates/eval_utils" }
 extension = { path = "apps/ide/crates/extension" }
@@ -358,13 +359,13 @@ extensions_ui = { path = "apps/ide/crates/extensions_ui" }
 feature_flags = { path = "apps/ide/crates/feature_flags" }
 feature_flags_macros = { path = "apps/ide/crates/feature_flags_macros" }
 feedback = { path = "apps/ide/crates/feedback" }
-file_content = { path = "apps/ide/crates/file_content" }
+file_content = { path = "core/file_content" }
 file_finder = { path = "apps/ide/crates/file_finder" }
-file_icons = { path = "apps/ide/crates/file_icons" }
-fs = { path = "apps/ide/crates/fs" }
+file_icons = { path = "core/file_icons" }
+fs = { path = "core/fs" }
 fuzzy = { path = "apps/ide/crates/fuzzy" }
 fuzzy_nucleo = { path = "apps/ide/crates/fuzzy_nucleo" }
-git = { path = "apps/ide/crates/git" }
+git = { path = "core/git" }
 git_hosting_providers = { path = "apps/ide/crates/git_hosting_providers" }
 git_ui = { path = "apps/ide/crates/git_ui" }
 git_ui_core = { path = "apps/ide/crates/git_ui_core" }
@@ -402,7 +403,7 @@ language_core = { path = "apps/ide/crates/language_core" }
 language_detection = { path = "apps/ide/crates/language_detection" }
 language_extension = { path = "apps/ide/crates/language_extension" }
 language_model = { path = "apps/ide/crates/language_model" }
-language_model_core = { path = "apps/ide/crates/language_model_core" }
+language_model_core = { path = "core/language_model_core" }
 language_models = { path = "apps/ide/crates/language_models" }
 language_models_cloud = { path = "apps/ide/crates/language_models_cloud" }
 language_onboarding = { path = "apps/ide/crates/language_onboarding" }
@@ -421,11 +422,11 @@ markdown = { path = "apps/ide/crates/markdown" }
 markdown_preview = { path = "apps/ide/crates/markdown_preview" }
 menu = { path = "core/menu" }
 mermaid_render = { path = "core/mermaid_render" }
-migrator = { path = "apps/ide/crates/migrator" }
+migrator = { path = "core/migrator" }
 miniprofiler_ui = { path = "apps/ide/crates/miniprofiler_ui" }
 mistral = { path = "apps/ide/crates/mistral" }
 multi_buffer = { path = "apps/ide/crates/multi_buffer" }
-net = { path = "apps/ide/crates/net" }
+net = { path = "core/net" }
 node_runtime = { path = "apps/ide/crates/node_runtime" }
 notifications = { path = "apps/ide/crates/notifications" }
 oauth_callback_server = { path = "apps/ide/crates/oauth_callback_server" }
@@ -439,7 +440,7 @@ opencode = { path = "apps/ide/crates/opencode" }
 outline = { path = "apps/ide/crates/outline" }
 outline_panel = { path = "apps/ide/crates/outline_panel" }
 path = { path = "core/path" }
-paths = { path = "apps/ide/crates/paths" }
+paths = { path = "riso/paths" }
 perf = { path = "core/perf", default-features = false }
 picker = { path = "apps/ide/crates/picker" }
 picker_preview = { path = "apps/ide/crates/picker_preview" }
@@ -449,27 +450,27 @@ project = { path = "apps/ide/crates/project" }
 project_panel = { path = "apps/ide/crates/project_panel" }
 project_symbols = { path = "apps/ide/crates/project_symbols" }
 prompt_store = { path = "apps/ide/crates/prompt_store" }
-proto = { path = "apps/ide/crates/proto" }
+proto = { path = "core/proto" }
 proxy_handshake = { path = "apps/ide/crates/proxy_handshake" }
 recent_projects = { path = "apps/ide/crates/recent_projects" }
 refineable = { path = "core/refineable" }
-release_channel = { path = "apps/ide/crates/release_channel" }
+release_channel = { path = "riso/release_channel" }
 remote = { path = "apps/ide/crates/remote" }
 remote_connection = { path = "apps/ide/crates/remote_connection" }
 remote_server = { path = "apps/ide/crates/remote_server" }
 repl = { path = "apps/ide/crates/repl" }
 reqwest_client = { path = "core/reqwest_client" }
 rodio = { git = "https://github.com/RustAudio/rodio", rev = "3ee9745862279ce1d18db593155016e7ce024aeb", default-features = false, features = ["wav", "playback", "wav_output", "recording"] }
-rope = { path = "apps/ide/crates/rope" }
+rope = { path = "core/rope" }
 rpc = { path = "apps/ide/crates/rpc" }
 sandbox = { path = "apps/ide/crates/sandbox" }
 scheduler = { path = "core/scheduler" }
 search = { path = "apps/ide/crates/search" }
 session = { path = "apps/ide/crates/session" }
-settings = { path = "apps/ide/crates/settings" }
-settings_content = { path = "apps/ide/crates/settings_content" }
-settings_json = { path = "apps/ide/crates/settings_json", default-features = false }
-settings_macros = { path = "apps/ide/crates/settings_macros" }
+settings = { path = "core/settings" }
+settings_content = { path = "core/settings_content" }
+settings_json = { path = "core/settings_json", default-features = false }
+settings_macros = { path = "core/settings_macros" }
 settings_profile_selector = { path = "apps/ide/crates/settings_profile_selector" }
 settings_ui = { path = "apps/ide/crates/settings_ui" }
 shell_command_parser = { path = "apps/ide/crates/shell_command_parser" }
@@ -477,8 +478,8 @@ sidebar = { path = "apps/ide/crates/sidebar" }
 snippet = { path = "apps/ide/crates/snippet" }
 snippet_provider = { path = "apps/ide/crates/snippet_provider" }
 snippets_ui = { path = "apps/ide/crates/snippets_ui" }
-sqlez = { path = "apps/ide/crates/sqlez" }
-sqlez_macros = { path = "apps/ide/crates/sqlez_macros" }
+sqlez = { path = "core/sqlez" }
+sqlez_macros = { path = "core/sqlez_macros" }
 streaming_diff = { path = "apps/ide/crates/streaming_diff" }
 sum_tree = { path = "core/sum_tree" }
 svg_preview = { path = "apps/ide/crates/svg_preview" }
@@ -488,15 +489,15 @@ tab_switcher = { path = "apps/ide/crates/tab_switcher" }
 tabular_data_preview = { path = "apps/ide/crates/tabular_data_preview"}
 task = { path = "apps/ide/crates/task" }
 tasks_ui = { path = "apps/ide/crates/tasks_ui" }
-telemetry = { path = "apps/ide/crates/telemetry" }
-telemetry_events = { path = "apps/ide/crates/telemetry_events" }
+telemetry = { path = "core/telemetry" }
+telemetry_events = { path = "core/telemetry_events" }
 terminal = { path = "apps/ide/crates/terminal" }
 terminal_view = { path = "apps/ide/crates/terminal_view" }
-text = { path = "apps/ide/crates/text" }
+text = { path = "core/text" }
 theme = { path = "core/theme" }
 theme_extension = { path = "apps/ide/crates/theme_extension" }
 theme_selector = { path = "apps/ide/crates/theme_selector" }
-theme_settings = { path = "apps/ide/crates/theme_settings" }
+theme_settings = { path = "core/theme_settings" }
 time_format = { path = "apps/ide/crates/time_format" }
 title_bar = { path = "apps/ide/crates/title_bar" }
 toolchain_selector = { path = "apps/ide/crates/toolchain_selector" }
@@ -507,7 +508,7 @@ ui_prompt = { path = "apps/ide/crates/ui_prompt" }
 util = { path = "core/util" }
 util_macros = { path = "core/util_macros" }
 vim = { path = "apps/ide/crates/vim" }
-vim_mode_setting = { path = "apps/ide/crates/vim_mode_setting" }
+vim_mode_setting = { path = "core/vim_mode_setting" }
 watch = { path = "apps/ide/crates/watch" }
 web_search = { path = "apps/ide/crates/web_search" }
 web_search_providers = { path = "apps/ide/crates/web_search_providers" }
@@ -519,10 +520,10 @@ x_ai = { path = "apps/ide/crates/x_ai" }
 x_ai_subscribed = { path = "apps/ide/crates/x_ai_subscribed" }
 zed_actions = { path = "apps/ide/crates/zed_actions" }
 zed_credentials_provider = { path = "apps/ide/crates/zed_credentials_provider" }
-zed_env_vars = { path = "apps/ide/crates/zed_env_vars" }
-zeta_prompt = { path = "apps/ide/crates/zeta_prompt" }
+zed_env_vars = { path = "core/zed_env_vars" }
+zeta_prompt = { path = "core/zeta_prompt" }
 zlog = { path = "core/zlog" }
-zlog_settings = { path = "apps/ide/crates/zlog_settings" }
+zlog_settings = { path = "core/zlog_settings" }
 ztracing = { path = "core/ztracing" }
 ztracing_macro = { path = "core/ztracing_macro" }
 
@@ -1013,6 +1014,7 @@ yaml-rust2 = { version = "0.8", default-features = false }
 yawc = { version = "0.4", default-features = false }
 zeroize = "1.8"
 zstd = { version = "0.13", default-features = false, features = ["legacy", "arrays"] }
+riso_identity = { path = "riso/identity" }
 
 [workspace.dependencies.windows]
 version = "0.62"

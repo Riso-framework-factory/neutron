@@ -3,7 +3,11 @@
 
 # Merged into the root Cargo.toml.
 [manifest.workspace]
+members = ["riso/identity"]
 exclude = ["tooling/neutron_cli"]
+
+[manifest.workspace.dependencies]
+riso_identity = { path = "riso/identity" }
 
 # Merged into .cargo/config.toml.
 [cargo-config.alias]

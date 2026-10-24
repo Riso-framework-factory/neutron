@@ -13,4 +13,5 @@ doctest = false
 
 [dependencies]
 gpui.workspace = true
+riso_identity.workspace = true
 semver.workspace = true

@@ -25,3 +25,9 @@ Run util's tests with `--features util/debug-embed`. Allowed in `upstream.toml`
 
 - `gpui` `app::bench_context::tests::foreground_work_reports_long_task_without_window_draw` is
   timing-based. It can fail when the whole core test suite runs in parallel and passes on its own.
+
+## `clock` tests need `test-support`
+
+`clock`'s `#[cfg(test)]` code uses `parking_lot`, which is only enabled by its `test-support`
+feature. In Zed's full workspace another crate enables that feature, so the bug never shows; when
+checking or testing core on its own, pass `--features clock/test-support`.

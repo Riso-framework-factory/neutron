@@ -1,3 +1,5 @@
+// Modified from Zed (crates/release_channel) for Neutron, 2026-10-24: names, app ids and the
+// docs URL come from `riso_identity`; the default channel no longer reads crates/zed/RELEASE_CHANNEL.
 //! Provides constructs for the Zed app version and release channel.
 
 #![deny(missing_docs)]
@@ -28,9 +30,14 @@ fn compile_time_release_channel_name() -> String {
     env!("ZED_RELEASE_CHANNEL").trim().to_string()
 }
 
+// Neutron: there is no `crates/zed/RELEASE_CHANNEL` next to this crate; apps choose the channel
+// with `NEUTRON_RELEASE_CHANNEL` at build time.
 #[cfg(not(__do_not_set_zed_release_channel))]
 fn compile_time_release_channel_name() -> String {
-    include_str!("../../zed/RELEASE_CHANNEL").trim().to_string()
+    option_env!("NEUTRON_RELEASE_CHANNEL")
+        .unwrap_or("dev")
+        .trim()
+        .to_string()
 }
 
 #[doc(hidden)]
@@ -43,12 +50,7 @@ pub static RELEASE_CHANNEL: LazyLock<ReleaseChannel> =
 /// The app identifier for the current release channel, Windows only.
 #[cfg(target_os = "windows")]
 pub fn app_identifier() -> &'static str {
-    match *RELEASE_CHANNEL {
-        ReleaseChannel::Dev => "Zed-Editor-Dev",
-        ReleaseChannel::Nightly => "Zed-Editor-Nightly",
-        ReleaseChannel::Preview => "Zed-Editor-Preview",
-        ReleaseChannel::Stable => "Zed-Editor-Stable",
-    }
+    riso_identity::get().windows_identifier(RELEASE_CHANNEL.identity_channel())
 }
 
 /// The Git commit SHA that Zed was built at.
@@ -204,12 +206,7 @@ impl ReleaseChannel {
 
     /// Returns the display name for this [`ReleaseChannel`].
     pub fn display_name(&self) -> &'static str {
-        match self {
-            ReleaseChannel::Dev => "Zed Dev",
-            ReleaseChannel::Nightly => "Zed Nightly",
-            ReleaseChannel::Preview => "Zed Preview",
-            ReleaseChannel::Stable => "Zed",
-        }
+        riso_identity::get().display_name(self.identity_channel())
     }
 
     /// Returns the programmatic name for this [`ReleaseChannel`].
@@ -226,11 +223,15 @@ impl ReleaseChannel {
     /// and WM_CLASS on X11.
     /// This also has to match the bundle identifier for Zed on macOS.
     pub fn app_id(&self) -> &'static str {
+        riso_identity::get().app_id(self.identity_channel())
+    }
+
+    fn identity_channel(&self) -> riso_identity::Channel {
         match self {
-            ReleaseChannel::Dev => "dev.zed.Zed-Dev",
-            ReleaseChannel::Nightly => "dev.zed.Zed-Nightly",
-            ReleaseChannel::Preview => "dev.zed.Zed-Preview",
-            ReleaseChannel::Stable => "dev.zed.Zed",
+            ReleaseChannel::Dev => riso_identity::Channel::Dev,
+            ReleaseChannel::Nightly => riso_identity::Channel::Nightly,
+            ReleaseChannel::Preview => riso_identity::Channel::Preview,
+            ReleaseChannel::Stable => riso_identity::Channel::Stable,
         }
     }
 
@@ -253,11 +254,12 @@ impl ReleaseChannel {
             Self::Stable => None,
         };
 
+        let docs_url = riso_identity::get().docs_url().unwrap_or(ZED_DOCS_URL);
         match channel_path_segment {
-            Some(channel) if slug.is_empty() => format!("{ZED_DOCS_URL}/{channel}"),
-            Some(channel) => format!("{ZED_DOCS_URL}/{channel}/{slug}"),
-            None if slug.is_empty() => ZED_DOCS_URL.to_string(),
-            None => format!("{ZED_DOCS_URL}/{slug}"),
+            Some(channel) if slug.is_empty() => format!("{docs_url}/{channel}"),
+            Some(channel) => format!("{docs_url}/{channel}/{slug}"),
+            None if slug.is_empty() => docs_url.to_string(),
+            None => format!("{docs_url}/{slug}"),
         }
     }
 }

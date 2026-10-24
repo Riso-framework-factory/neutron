@@ -12703,6 +12703,7 @@ dependencies = [
  "const_format",
  "dirs",
  "ignore",
+ "riso_identity",
  "util",
 ]
 
@@ -15029,6 +15030,7 @@ name = "release_channel"
 version = "0.1.0"
 dependencies = [
  "gpui",
+ "riso_identity",
  "semver",
 ]
 
@@ -15369,6 +15371,10 @@ dependencies = [
  "untrusted 0.9.0",
  "windows-sys 0.52.0",
 ]
+
+[[package]]
+name = "riso_identity"
+version = "0.1.0"
 
 [[package]]
 name = "rle-decode-fast"

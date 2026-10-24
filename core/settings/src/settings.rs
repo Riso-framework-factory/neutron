@@ -137,7 +137,7 @@ impl fmt::Display for WorktreeId {
 // see the `assets` crate for the rationale.
 util::fs_embed! {
     pub struct SettingsAssets,
-    crate_relative = "../../../../assets",
+    crate_relative = "../../assets",
     root_relative = "assets",
     include = ["settings/*", "keymaps/*"],
     exclude = ["*.DS_Store"],

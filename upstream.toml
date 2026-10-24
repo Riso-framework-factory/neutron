@@ -55,15 +55,28 @@ crates = [
     # B2: design system.
     "component", "icons", "menu", "mermaid_render", "syntax_theme", "theme", "ui", "ui_input",
     "ui_macros",
+    # B3: settings, file system and persistence. Needs the `paths` and `release_channel` shims.
+    "askpass", "clock", "cloud_llm_client", "db", "env_var", "file_content", "file_icons", "fs",
+    "fs_benchmarks", "git", "language_model_core", "migrator", "net", "proto", "rope",
+    "schema_generator", "settings", "settings_content", "settings_json", "settings_macros",
+    "sqlez", "sqlez_macros", "telemetry", "telemetry_events", "text", "theme_importer",
+    "theme_settings", "vim_mode_setting", "zed_env_vars", "zeta_prompt", "zlog_settings",
 ]
+
+# Riso crates that keep an upstream crate's name and replace it everywhere. The first sync copies
+# the upstream crate; later syncs 3-way merge upstream changes since `base` into it.
+[shim.paths]
+origin = "crates/paths"
+base = "9f305aaf88370e8ca39c702242186e3d8f97ecca"
+
+[shim.release_channel]
+origin = "crates/release_channel"
+base = "9f305aaf88370e8ca39c702242186e3d8f97ecca"
 
 [policy]
 # Dev-dependencies of core crates that may point outside core, as "from -> to".
 allow_core_dev_deps = [
     "markdown -> languages",
-    # Temporary: `ui`'s tests need batch B3 (settings); remove once B3 is in core.
-    "ui -> settings",
-    "ui -> theme_settings",
 ]
 # Core files with out-of-crate paths that cannot resolve in Neutron's layout, with the reason.
 allow_core_path_escapes = [

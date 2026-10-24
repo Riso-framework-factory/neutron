@@ -19,4 +19,5 @@ doctest = false
 const_format.workspace = true
 dirs.workspace = true
 ignore.workspace = true
+riso_identity.workspace = true
 util.workspace = true
