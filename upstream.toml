@@ -42,38 +42,39 @@ unmanaged = [".git"]
 "tooling/xtask" = "tooling/xtask"
 
 [core]
-# Upstream packages copied verbatim to `core/<directory>`, added in batches whose dependency
-# closure stays inside core. A package nested in another package's directory (such as
-# `refineable/derive_refineable`) moves with its parent.
-crates = [
-    # B1: GPUI and its Apache-2.0 foundation.
-    "bench_metrics", "collections", "derive_refineable", "gpui", "gpui_apple", "gpui_ios",
-    "gpui_linux", "gpui_macos", "gpui_macros", "gpui_platform", "gpui_shared_string",
-    "gpui_tokio", "gpui_util", "gpui_web", "gpui_wgpu", "gpui_windows", "http_client",
-    "http_client_tls", "path", "perf", "refineable", "reqwest_client", "scheduler", "sum_tree",
-    "util", "util_macros", "zlog", "ztracing", "ztracing_macro",
-    # B2: design system.
-    "component", "icons", "menu", "mermaid_render", "syntax_theme", "theme", "ui", "ui_input",
-    "ui_macros",
-    # B3: settings, file system and persistence. Needs the `paths` and `release_channel` shims.
-    "askpass", "clock", "cloud_llm_client", "db", "env_var", "file_content", "file_icons", "fs",
-    "fs_benchmarks", "git", "language_model_core", "migrator", "net", "proto", "rope",
-    "schema_generator", "settings", "settings_content", "settings_json", "settings_macros",
-    "sqlez", "sqlez_macros", "telemetry", "telemetry_events", "text", "theme_importer",
-    "theme_settings", "vim_mode_setting", "zed_env_vars", "zeta_prompt", "zlog_settings",
-    # B4: platform services.
-    "assets", "audio", "aws_http_client", "crashes", "credentials_provider", "feature_flags",
-    "feature_flags_macros", "fuzzy", "fuzzy_nucleo", "hang_telemetry", "html_to_markdown",
-    "http_proxy", "node_runtime", "oauth_callback_server", "proxy_handshake", "session",
-    "shell_command_parser", "snippet", "streaming_diff", "system_specs", "time_format", "watch",
-    "windows_resources", "zed_actions", "zed_credentials_provider",
-    # B5: text, language and terminal engines.
-    "grammars", "language", "language_core", "language_detection", "lsp", "markdown", "rpc",
-    "task", "terminal", "worktree", "worktree_benchmarks",
-    # B6: language model providers, MCP client and agent skills.
-    "agent_skills", "anthropic", "bedrock", "context_server", "deepseek", "google_ai",
-    "language_model", "llama_cpp", "lmstudio", "mistral", "ollama", "open_ai", "open_router",
-    "openai_subscribed", "opencode", "web_search", "x_ai", "x_ai_subscribed",
+# Core is the dependency closure (normal and build dependencies) of these roots: the upstream crates
+# the framework itself needs. Everything else stays in the apps/ide mirror, including crates that
+# merely look useful. Add a root only for something `riso/` or apps build on, and say why.
+#
+# The closure also pulls in crates that belong to the IDE but that two verbatim roots depend on:
+# `settings_content` -> language_model_core, cloud_llm_client, zeta_prompt and
+# `fs` -> git, askpass, net, proto, telemetry. They are types and dormant code; cutting them would
+# mean shimming settings_content and fs.
+roots = [
+    # Windowing, rendering, input and platform backends; tokio interop for libraries that need it.
+    "gpui", "gpui_platform", "gpui_tokio",
+    # Design system and theme loading.
+    "ui", "ui_input", "theme", "theme_settings",
+    # Settings store, keymaps and settings file watching.
+    "settings",
+    # Persistence (SQLite key-value store) and window/session restore.
+    "db", "session",
+    # File system access and watching.
+    "fs",
+    # HTTP client.
+    "http_client", "reqwest_client",
+    # Fonts, icons and themes embedded from assets/.
+    "assets",
+    # Logging and tracing.
+    "zlog", "zlog_settings", "ztracing",
+    # Secure credential storage (keychain), keyed by the app identity.
+    "credentials_provider", "zed_credentials_provider",
+    # Crash dumps, system info for reports and main-thread hang detection, for riso_app.
+    "crashes", "system_specs", "hang_telemetry",
+    # Fuzzy matching for pickers and the command palette.
+    "fuzzy", "fuzzy_nucleo",
+    # Windows executable resources for bundling.
+    "windows_resources",
 ]
 
 # Riso crates that keep an upstream crate's name and replace it everywhere. The first sync copies
@@ -88,17 +89,12 @@ base = "d93bf740852672fb299fcbdba3af1d5fd0253e92"
 
 [policy]
 # Dev-dependencies of core crates that may point outside core, as "from -> to".
-allow_core_dev_deps = [
-    "markdown -> languages",
-]
+allow_core_dev_deps = []
 # Core files with out-of-crate paths that cannot resolve in Neutron's layout, with the reason.
 allow_core_path_escapes = [
     # A test of `fs_embed!` in dev mode reads `crates/util/src`; run util's tests with
     # `--features debug-embed`, which upstream tests with a different path.
     "crates/util/src/util.rs",
-    # Dev builds would read tree-sitter queries from `crates/grammars/src`; neutron.workspace.toml
-    # enables `util/debug-embed` so they are embedded instead.
-    "crates/grammars/src/grammars.rs",
 ]
 
 # Literals the path fixer cannot find by itself: paths resolved against the current directory,

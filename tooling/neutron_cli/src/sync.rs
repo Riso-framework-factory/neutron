@@ -14,6 +14,9 @@ use walkdir::WalkDir;
 /// Directories and files inside managed roots that the sync never deletes.
 const PRESERVED_NAMES: &[&str] = &["target", "node_modules", ".DS_Store"];
 
+/// Neutron-owned files inside managed directories.
+const NEUTRON_OWNED_FILES: &[&str] = &["core/AGENTS.md"];
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Entry {
     File { content: Vec<u8>, executable: bool },
@@ -55,6 +58,7 @@ pub fn run(
     dry_run: bool,
 ) -> Result<SyncOutcome> {
     let mut warnings = crate_changes_since(upstream, layout, &config.upstream.commit)?;
+    warnings.extend(core_membership_changes(root, config, upstream, layout)?);
     let mut rewrites = Vec::new();
     let mut plan: BTreeMap<String, PlannedEntry> = BTreeMap::new();
     let fixer = PathFixer::new(upstream, layout, &config.rewrite.literals);
@@ -242,6 +246,66 @@ pub fn run(
     })
 }
 
+/// Crates entering or leaving `core/` with this sync. Core is the closure of `[core] roots`, so an
+/// upstream dependency change can move a crate in or out without anyone editing upstream.toml.
+fn core_membership_changes(
+    root: &Path,
+    config: &Config,
+    upstream: &Upstream,
+    layout: &Layout,
+) -> Result<Vec<String>> {
+    let core_directory = root.join("core");
+    let mut existing = BTreeSet::new();
+    if core_directory.is_dir() {
+        for entry in fs::read_dir(&core_directory)
+            .with_context(|| format!("reading {}", core_directory.display()))?
+        {
+            let entry = entry.with_context(|| format!("reading {}", core_directory.display()))?;
+            if entry.file_type().is_ok_and(|kind| kind.is_dir())
+                && let Some(name) = entry.file_name().to_str()
+            {
+                existing.insert(format!("core/{name}"));
+            }
+        }
+    }
+    let planned: BTreeMap<&str, &str> = layout.core_crates().map(|(from, to)| (to, from)).collect();
+    let core_names = crate::layout::core_closure(config, upstream)?;
+
+    let mut notes = Vec::new();
+    for (destination, origin) in &planned {
+        if existing.contains(*destination) {
+            continue;
+        }
+        let Some(package) = upstream
+            .packages
+            .iter()
+            .find(|package| package.dir == *origin)
+        else {
+            continue;
+        };
+        let mut needed_by: Vec<&str> = upstream
+            .packages
+            .iter()
+            .filter(|dependent| core_names.contains(dependent.name.as_str()))
+            .filter(|dependent| dependent.dependencies.contains(&package.name))
+            .map(|dependent| dependent.name.as_str())
+            .collect();
+        needed_by.sort_unstable();
+        let reason = if config.core.roots.contains(&package.name) {
+            "it is a core root".to_string()
+        } else {
+            format!("needed by {}", needed_by.join(", "))
+        };
+        notes.push(format!("`{}` moves into core ({reason})", package.name));
+    }
+    for destination in existing.difference(&planned.keys().map(|key| key.to_string()).collect()) {
+        notes.push(format!(
+            "`{destination}` leaves core; no core root depends on it any more"
+        ));
+    }
+    Ok(notes)
+}
+
 /// Upstream crates added or removed since the previously synced commit. New crates land in the
 /// IDE mirror by default, so someone has to decide whether they belong in core.
 fn crate_changes_since(
@@ -386,7 +450,7 @@ fn stale_paths(
                 .to_str()
                 .context("non-UTF-8 path in a managed directory")?
                 .replace('\\', "/");
-            if !plan.contains_key(&relative) {
+            if !plan.contains_key(&relative) && !NEUTRON_OWNED_FILES.contains(&relative.as_str()) {
                 stale.insert(relative);
             }
         }

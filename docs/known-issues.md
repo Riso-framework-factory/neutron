@@ -19,18 +19,11 @@ enabled by default, so nothing is lost. `apps/ide` keeps `crates/` and is not af
   forwards to `zlog`. The crate name is the directory name, so `riso/identity` logs as `identity`.
 - Still worth an upstream PR, which would also make the failing test pass.
 
-## Debug builds embed assets instead of reading the checkout
+## `util` fs_embed test needs `debug-embed`
 
-Upstream's `util::fs_embed!` makes debug builds read files at runtime from the repository root
-plus a `crates/...` path (`grammars` uses `crates/grammars/src`, `util`'s own test uses
-`crates/util/src`). Those paths do not exist in Neutron's layout, and core cannot be rewritten, so
-`neutron.workspace.toml` enables `util/debug-embed` for the whole workspace. Debug builds then
-embed these files at compile time.
-
-- Effect: editing a file in `assets/` or a tree-sitter query needs a rebuild to show up, unlike in
-  Zed's own checkout.
-- Without it: debug builds panic at startup with "missing cpp/semantic_token_rules.json".
-- Fix: upstream PR so `root_relative` does not assume `crates/`.
+`util`'s test of `fs_embed!` in dev mode reads `crates/util/src` from the repository root, which
+does not exist in Neutron. Run util's tests with `--features util/debug-embed`; upstream then tests
+a different path. Allowed in `upstream.toml` (`policy.allow_core_path_escapes`).
 
 ## Flaky under load
 

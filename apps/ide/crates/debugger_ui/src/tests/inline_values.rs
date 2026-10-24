@@ -1827,7 +1827,7 @@ def process_data(untyped_param, typed_param: int, another_typed: str):
 }
 
 fn python_lang() -> Language {
-    let debug_variables_query = include_str!("../../../../../../core/grammars/src/python/debugger.scm");
+    let debug_variables_query = include_str!("../../../grammars/src/python/debugger.scm");
     Language::new(
         LanguageConfig {
             name: "Python".into(),
@@ -1845,7 +1845,7 @@ fn python_lang() -> Language {
 }
 
 fn go_lang() -> Arc<Language> {
-    let debug_variables_query = include_str!("../../../../../../core/grammars/src/go/debugger.scm");
+    let debug_variables_query = include_str!("../../../grammars/src/go/debugger.scm");
     Arc::new(
         Language::new(
             LanguageConfig {
@@ -2265,7 +2265,7 @@ fn main() {
 }
 
 fn javascript_lang() -> Arc<Language> {
-    let debug_variables_query = include_str!("../../../../../../core/grammars/src/javascript/debugger.scm");
+    let debug_variables_query = include_str!("../../../grammars/src/javascript/debugger.scm");
     Arc::new(
         Language::new(
             LanguageConfig {
@@ -2285,7 +2285,7 @@ fn javascript_lang() -> Arc<Language> {
 }
 
 fn typescript_lang() -> Arc<Language> {
-    let debug_variables_query = include_str!("../../../../../../core/grammars/src/typescript/debugger.scm");
+    let debug_variables_query = include_str!("../../../grammars/src/typescript/debugger.scm");
     Arc::new(
         Language::new(
             LanguageConfig {
@@ -2305,7 +2305,7 @@ fn typescript_lang() -> Arc<Language> {
 }
 
 fn tsx_lang() -> Arc<Language> {
-    let debug_variables_query = include_str!("../../../../../../core/grammars/src/tsx/debugger.scm");
+    let debug_variables_query = include_str!("../../../grammars/src/tsx/debugger.scm");
     Arc::new(
         Language::new(
             LanguageConfig {

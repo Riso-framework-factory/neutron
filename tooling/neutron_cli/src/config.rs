@@ -69,8 +69,10 @@ pub struct LayoutSection {
 
 #[derive(Debug, Default, Deserialize)]
 pub struct CoreSection {
+    /// Upstream crates the framework itself needs. Core is their dependency closure, so a crate
+    /// that is merely useful never ends up in core by accident.
     #[serde(default)]
-    pub crates: Vec<String>,
+    pub roots: Vec<String>,
 }
 
 #[derive(Debug, Default, Deserialize)]
