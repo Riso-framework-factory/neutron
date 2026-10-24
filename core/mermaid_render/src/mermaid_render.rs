@@ -189,9 +189,9 @@ mod tests {
     #[test]
     fn mermaid_diagram_with_mixed_weight_combining_marks_does_not_panic() {
         const IBM_PLEX_REGULAR: &[u8] =
-            include_bytes!("../../../../../assets/fonts/ibm-plex-sans/IBMPlexSans-Regular.ttf");
+            include_bytes!("../../../assets/fonts/ibm-plex-sans/IBMPlexSans-Regular.ttf");
         const IBM_PLEX_SEMIBOLD: &[u8] =
-            include_bytes!("../../../../../assets/fonts/ibm-plex-sans/IBMPlexSans-SemiBold.ttf");
+            include_bytes!("../../../assets/fonts/ibm-plex-sans/IBMPlexSans-SemiBold.ttf");
 
         let zalgo = "Ne\u{0301}\u{0302}\u{0303}\u{0304}\u{0306}\u{0307}\u{0308}\u{030a}d";
         let source = format!("flowchart TD\n  A[\"**{zalgo}** {zalgo}\"]");

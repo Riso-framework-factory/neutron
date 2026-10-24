@@ -326,7 +326,7 @@ mod tests {
 
     #[test]
     fn test_all_icons_exist() {
-        let asset_path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../../assets");
+        let asset_path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../assets");
 
         for icon in IconName::iter() {
             let icon_path = asset_path.join(&*icon.path());
@@ -339,7 +339,7 @@ mod tests {
 
     #[test]
     fn test_no_dangling_icons() -> Result<(), ParseError> {
-        let icons_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../../assets/icons");
+        let icons_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../assets/icons");
 
         for entry in std::fs::read_dir(&icons_dir).expect("failed to read icons directory") {
             let path = entry.expect("failed to read icons directory entry").path();

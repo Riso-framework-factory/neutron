@@ -43,7 +43,7 @@ members = [
     "core/collections",
     "apps/ide/crates/command_palette",
     "apps/ide/crates/command_palette_hooks",
-    "apps/ide/crates/component",
+    "core/component",
     "apps/ide/crates/component_preview",
     "apps/ide/crates/context_server",
     "apps/ide/crates/copilot",
@@ -115,7 +115,7 @@ members = [
     "core/http_client",
     "core/http_client_tls",
     "apps/ide/crates/http_proxy",
-    "apps/ide/crates/icons",
+    "core/icons",
     "apps/ide/crates/image_viewer",
     "apps/ide/crates/input_latency_ui",
     "apps/ide/crates/inspector_ui",
@@ -145,8 +145,8 @@ members = [
     "apps/ide/crates/lsp_locations",
     "apps/ide/crates/markdown",
     "apps/ide/crates/markdown_preview",
-    "apps/ide/crates/menu",
-    "apps/ide/crates/mermaid_render",
+    "core/menu",
+    "core/mermaid_render",
     "apps/ide/crates/migrator",
     "apps/ide/crates/miniprofiler_ui",
     "apps/ide/crates/mistral",
@@ -209,7 +209,7 @@ members = [
     "apps/ide/crates/streaming_diff",
     "core/sum_tree",
     "apps/ide/crates/svg_preview",
-    "apps/ide/crates/syntax_theme",
+    "core/syntax_theme",
     "apps/ide/crates/system_specs",
     "apps/ide/crates/tab_switcher",
     "apps/ide/crates/tabular_data_preview",
@@ -220,7 +220,7 @@ members = [
     "apps/ide/crates/terminal",
     "apps/ide/crates/terminal_view",
     "apps/ide/crates/text",
-    "apps/ide/crates/theme",
+    "core/theme",
     "apps/ide/crates/theme_extension",
     "apps/ide/crates/theme_importer",
     "apps/ide/crates/theme_selector",
@@ -228,9 +228,9 @@ members = [
     "apps/ide/crates/time_format",
     "apps/ide/crates/title_bar",
     "apps/ide/crates/toolchain_selector",
-    "apps/ide/crates/ui",
-    "apps/ide/crates/ui_input",
-    "apps/ide/crates/ui_macros",
+    "core/ui",
+    "core/ui_input",
+    "core/ui_macros",
     "apps/ide/crates/ui_prompt",
     "core/util",
     "core/util_macros",
@@ -323,7 +323,7 @@ collections = { path = "core/collections", version = "0.1.0" }
 command_palette = { path = "apps/ide/crates/command_palette" }
 command_palette_hooks = { path = "apps/ide/crates/command_palette_hooks" }
 compliance = { path = "tooling/compliance" }
-component = { path = "apps/ide/crates/component" }
+component = { path = "core/component" }
 component_preview = { path = "apps/ide/crates/component_preview" }
 context_server = { path = "apps/ide/crates/context_server" }
 copilot = { path = "apps/ide/crates/copilot" }
@@ -389,7 +389,7 @@ html_to_markdown = { path = "apps/ide/crates/html_to_markdown" }
 http_client = { path = "core/http_client" }
 http_client_tls = { path = "core/http_client_tls" }
 http_proxy = { path = "apps/ide/crates/http_proxy" }
-icons = { path = "apps/ide/crates/icons" }
+icons = { path = "core/icons" }
 image_viewer = { path = "apps/ide/crates/image_viewer" }
 input_latency_ui = { path = "apps/ide/crates/input_latency_ui" }
 inspector_ui = { path = "apps/ide/crates/inspector_ui" }
@@ -419,8 +419,8 @@ lsp_command_selector = { path = "apps/ide/crates/lsp_command_selector" }
 lsp_locations = { path = "apps/ide/crates/lsp_locations" }
 markdown = { path = "apps/ide/crates/markdown" }
 markdown_preview = { path = "apps/ide/crates/markdown_preview" }
-menu = { path = "apps/ide/crates/menu" }
-mermaid_render = { path = "apps/ide/crates/mermaid_render" }
+menu = { path = "core/menu" }
+mermaid_render = { path = "core/mermaid_render" }
 migrator = { path = "apps/ide/crates/migrator" }
 miniprofiler_ui = { path = "apps/ide/crates/miniprofiler_ui" }
 mistral = { path = "apps/ide/crates/mistral" }
@@ -482,7 +482,7 @@ sqlez_macros = { path = "apps/ide/crates/sqlez_macros" }
 streaming_diff = { path = "apps/ide/crates/streaming_diff" }
 sum_tree = { path = "core/sum_tree" }
 svg_preview = { path = "apps/ide/crates/svg_preview" }
-syntax_theme = { path = "apps/ide/crates/syntax_theme" }
+syntax_theme = { path = "core/syntax_theme" }
 system_specs = { path = "apps/ide/crates/system_specs" }
 tab_switcher = { path = "apps/ide/crates/tab_switcher" }
 tabular_data_preview = { path = "apps/ide/crates/tabular_data_preview"}
@@ -493,16 +493,16 @@ telemetry_events = { path = "apps/ide/crates/telemetry_events" }
 terminal = { path = "apps/ide/crates/terminal" }
 terminal_view = { path = "apps/ide/crates/terminal_view" }
 text = { path = "apps/ide/crates/text" }
-theme = { path = "apps/ide/crates/theme" }
+theme = { path = "core/theme" }
 theme_extension = { path = "apps/ide/crates/theme_extension" }
 theme_selector = { path = "apps/ide/crates/theme_selector" }
 theme_settings = { path = "apps/ide/crates/theme_settings" }
 time_format = { path = "apps/ide/crates/time_format" }
 title_bar = { path = "apps/ide/crates/title_bar" }
 toolchain_selector = { path = "apps/ide/crates/toolchain_selector" }
-ui = { path = "apps/ide/crates/ui" }
-ui_input = { path = "apps/ide/crates/ui_input" }
-ui_macros = { path = "apps/ide/crates/ui_macros" }
+ui = { path = "core/ui" }
+ui_input = { path = "core/ui_input" }
+ui_macros = { path = "core/ui_macros" }
 ui_prompt = { path = "apps/ide/crates/ui_prompt" }
 util = { path = "core/util" }
 util_macros = { path = "core/util_macros" }

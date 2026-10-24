@@ -52,11 +52,19 @@ crates = [
     "gpui_tokio", "gpui_util", "gpui_web", "gpui_wgpu", "gpui_windows", "http_client",
     "http_client_tls", "path", "perf", "refineable", "reqwest_client", "scheduler", "sum_tree",
     "util", "util_macros", "zlog", "ztracing", "ztracing_macro",
+    # B2: design system.
+    "component", "icons", "menu", "mermaid_render", "syntax_theme", "theme", "ui", "ui_input",
+    "ui_macros",
 ]
 
 [policy]
 # Dev-dependencies of core crates that may point outside core, as "from -> to".
-allow_core_dev_deps = ["markdown -> languages"]
+allow_core_dev_deps = [
+    "markdown -> languages",
+    # Temporary: `ui`'s tests need batch B3 (settings); remove once B3 is in core.
+    "ui -> settings",
+    "ui -> theme_settings",
+]
 # Core files with out-of-crate paths that cannot resolve in Neutron's layout, with the reason.
 allow_core_path_escapes = [
     # A test of `fs_embed!` in dev mode reads `crates/util/src`; run util's tests with

@@ -228,7 +228,7 @@ mod bundled_themes {
         /// Load the "One Dark" syntax theme from the bundled theme JSON.
         pub fn one_dark() -> Arc<Self> {
             load_theme(
-                include_str!("../../../../../assets/themes/one/one.json"),
+                include_str!("../../../assets/themes/one/one.json"),
                 "One Dark",
             )
         }
