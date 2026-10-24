@@ -21,6 +21,15 @@ anything; the sections between the `upstream` markers below are synced from Zed'
 `apps/<app>` → `crate/*` → `riso/*` → `core/*`. Nothing outside `apps/ide` may depend on a crate in
 `apps/ide`; `cargo neutron verify` checks this.
 
+## Logging
+
+- Log with the `log` macros and `.log_err()` as in Zed.
+- In an app's `main`, install the logger with `riso_log::init()`, never `zlog::init()` or
+  `zlog::try_init()`. Zed's `log_err()` finds the crate name by looking for `crates/` in the file
+  path, which Neutron's layout does not have; `riso_log` restores it so per-crate log filters work.
+  `cargo neutron verify` (V9) rejects direct `zlog` initialization outside `apps/ide`.
+- Library crates in `crate/` and `riso/` never install a logger.
+
 ## Workspace changes
 
 - Add workspace members, dependencies or cargo aliases in `neutron.workspace.toml`, then run

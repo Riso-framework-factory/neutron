@@ -118,6 +118,7 @@ pub fn run(
         });
     }
     check_conflict_markers(root, &mut findings)?;
+    check_logger_initialization(root, layout, &mut findings)?;
     check_modification_headers(root, config, upstream, &mut findings)?;
     Ok(findings)
 }
@@ -278,6 +279,65 @@ fn check_modification_headers(
                         path.display()
                     ),
                 });
+            }
+        }
+    }
+    Ok(())
+}
+
+/// V9: Neutron code installs the logger through `riso_log`, which keeps `log_err()` targets in
+/// Neutron's layout. Direct `zlog` initialization is only allowed in the IDE mirror and `riso_log`.
+fn check_logger_initialization(
+    root: &Path,
+    layout: &Layout,
+    findings: &mut Vec<Finding>,
+) -> Result<()> {
+    const ALLOWED: &[&str] = &["riso/log"];
+    for top in ["riso", "crate", "apps"] {
+        let directory = root.join(top);
+        if !directory.is_dir() {
+            continue;
+        }
+        let walker = WalkDir::new(&directory)
+            .into_iter()
+            .filter_entry(|entry| entry.file_name() != "target");
+        for entry in walker {
+            let entry = entry.with_context(|| format!("walking {}", directory.display()))?;
+            if !entry.file_type().is_file()
+                || entry
+                    .path()
+                    .extension()
+                    .is_none_or(|extension| extension != "rs")
+            {
+                continue;
+            }
+            let relative = entry
+                .path()
+                .strip_prefix(root)
+                .ok()
+                .and_then(Path::to_str)
+                .unwrap_or_default()
+                .replace('\\', "/");
+            if strip_path_prefix(&relative, layout.ide_root()).is_some()
+                || ALLOWED
+                    .iter()
+                    .any(|allowed| strip_path_prefix(&relative, allowed).is_some())
+            {
+                continue;
+            }
+            let Ok(text) = fs::read_to_string(entry.path()) else {
+                continue;
+            };
+            for (index, line) in text.lines().enumerate() {
+                if line.contains("zlog::init(") || line.contains("zlog::try_init(") {
+                    findings.push(Finding {
+                        code: "V9",
+                        message: format!(
+                            "{relative}:{}: initialize logging with `riso_log::init()` instead of zlog",
+                            index + 1
+                        ),
+                    });
+                }
             }
         }
     }
