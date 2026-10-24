@@ -1,6 +1,6 @@
 # apps/ide is generated
 
-This directory mirrors `zed-industries/zed` at `9f305aaf88370e8ca39c702242186e3d8f97ecca`, written by `cargo neutron sync`.
+This directory mirrors `zed-industries/zed` at `d93bf740852672fb299fcbdba3af1d5fd0253e92`, written by `cargo neutron sync`.
 Paths that point outside the mirror (for example into `assets/` or `core/`) are rewritten
 to their Neutron locations.
 
