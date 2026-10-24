@@ -5,8 +5,8 @@
 repo = "https://github.com/zed-industries/zed"
 ref = "main"
 # Written by `cargo neutron sync`.
-commit = "9f305aaf88370e8ca39c702242186e3d8f97ecca"
-commit_date = "2026-10-23"
+commit = "d93bf740852672fb299fcbdba3af1d5fd0253e92"
+commit_date = "2026-10-24"
 
 [layout]
 # Destination of every upstream path that no rule below maps: the IDE canary.
@@ -80,11 +80,11 @@ crates = [
 # the upstream crate; later syncs 3-way merge upstream changes since `base` into it.
 [shim.paths]
 origin = "crates/paths"
-base = "9f305aaf88370e8ca39c702242186e3d8f97ecca"
+base = "d93bf740852672fb299fcbdba3af1d5fd0253e92"
 
 [shim.release_channel]
 origin = "crates/release_channel"
-base = "9f305aaf88370e8ca39c702242186e3d8f97ecca"
+base = "d93bf740852672fb299fcbdba3af1d5fd0253e92"
 
 [policy]
 # Dev-dependencies of core crates that may point outside core, as "from -> to".
