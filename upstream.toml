@@ -70,6 +70,10 @@ crates = [
     # B5: text, language and terminal engines.
     "grammars", "language", "language_core", "language_detection", "lsp", "markdown", "rpc",
     "task", "terminal", "worktree", "worktree_benchmarks",
+    # B6: language model providers, MCP client and agent skills.
+    "agent_skills", "anthropic", "bedrock", "context_server", "deepseek", "google_ai",
+    "language_model", "llama_cpp", "lmstudio", "mistral", "ollama", "open_ai", "open_router",
+    "openai_subscribed", "opencode", "web_search", "x_ai", "x_ai_subscribed",
 ]
 
 # Riso crates that keep an upstream crate's name and replace it everywhere. The first sync copies
