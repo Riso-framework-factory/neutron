@@ -3,8 +3,8 @@ use crate::config::{CONFIG_FILE, Config, OVERLAY_FILE};
 use crate::layout::{Destination, Layout, strip_path_prefix};
 use crate::manifest::{self, Overlay};
 use crate::rewrite::{PathFixer, Rewrite};
-use crate::shim;
 use crate::upstream::{FileKind, Upstream};
+use crate::{lockfile, shim};
 use anyhow::{Context as _, Result, bail};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -113,7 +113,6 @@ pub fn run(
             ".cargo/config.toml".to_string(),
             manifest::cargo_config(upstream, &overlay)?.into_bytes(),
         ),
-        ("Cargo.lock".to_string(), upstream.read("Cargo.lock")?),
         (
             format!("{}/AGENTS.md", layout.ide_root()),
             agents::ide_notice(upstream).into_bytes(),
@@ -221,6 +220,15 @@ pub fn run(
         if !dry_run && let Some(new_base) = merged.new_base {
             Config::record_shim_base(root, name, &new_base)?;
         }
+    }
+
+    // Last, because the root manifest and shim manifests decide which members the lock holds.
+    if lockfile::sync(root, upstream, dry_run)? {
+        changes.push(Change {
+            path: "Cargo.lock".to_string(),
+            kind: ChangeKind::Write,
+            destination: None,
+        });
     }
 
     Ok(SyncOutcome {

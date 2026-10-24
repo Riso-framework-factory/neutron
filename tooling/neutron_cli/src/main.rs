@@ -5,6 +5,7 @@
 mod agents;
 mod config;
 mod layout;
+mod lockfile;
 mod manifest;
 mod rewrite;
 mod shim;

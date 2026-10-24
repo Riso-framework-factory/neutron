@@ -102,6 +102,21 @@ pub fn run(
         }),
     }
 
+    for package in crate::lockfile::drift(root, upstream)? {
+        findings.push(Finding {
+            code: "V8",
+            message: format!(
+                "Cargo.lock does not lock upstream's {package}; run `cargo neutron sync`"
+            ),
+        });
+    }
+    if !crate::lockfile::is_complete(root)? {
+        findings.push(Finding {
+            code: "V8",
+            message: "Cargo.lock is missing workspace members; run `cargo neutron sync`"
+                .to_string(),
+        });
+    }
     check_conflict_markers(root, &mut findings)?;
     check_modification_headers(root, config, upstream, &mut findings)?;
     Ok(findings)
