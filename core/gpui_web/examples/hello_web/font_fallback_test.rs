@@ -22,7 +22,7 @@ pub fn test_missing_glyph_notifications() -> Result<(), JsValue> {
     let text_system = platform.text_system();
     text_system
         .add_fonts(vec![Cow::Borrowed(include_bytes!(
-            "../../../../../../assets/fonts/lilex/Lilex-Regular.ttf"
+            "../../../../assets/fonts/lilex/Lilex-Regular.ttf"
         ))])
         .map_err(|error| JsValue::from_str(&error.to_string()))?;
     let font_id = text_system

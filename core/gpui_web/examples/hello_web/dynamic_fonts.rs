@@ -109,7 +109,7 @@ fn main() {
         if cx
             .text_system()
             .add_fonts(vec![Cow::Borrowed(include_bytes!(
-                "../../../../../../assets/fonts/ibm-plex-sans/IBMPlexSans-Regular.ttf"
+                "../../../../assets/fonts/ibm-plex-sans/IBMPlexSans-Regular.ttf"
             ))])
             .log_err()
             .is_none()

@@ -872,7 +872,7 @@ macro_rules! __fs_embed {
 /// ```ignore
 /// util::fs_embed! {
 ///     pub struct Assets,
-///     crate_relative = "../../../../assets",
+///     crate_relative = "../../assets",
 ///     root_relative = "assets",
 ///     include = ["fonts/**/*", "themes/**/*", "*.md"],
 ///     exclude = ["themes/src/*", "*.DS_Store"],
@@ -1079,7 +1079,7 @@ mod tests {
     crate::fs_embed! {
         struct FsEmbedTestAssets,
         crate_relative = "src",
-        root_relative = "apps/ide/crates/util/src",
+        root_relative = "crates/util/src",
         include = ["*.rs"],
         exclude = ["test/**/*"],
     }

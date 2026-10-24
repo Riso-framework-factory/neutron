@@ -42,12 +42,27 @@ unmanaged = [".git"]
 "tooling/xtask" = "tooling/xtask"
 
 [core]
-# Upstream packages copied verbatim to `core/<directory>`.
-crates = []
+# Upstream packages copied verbatim to `core/<directory>`, added in batches whose dependency
+# closure stays inside core. A package nested in another package's directory (such as
+# `refineable/derive_refineable`) moves with its parent.
+crates = [
+    # B1: GPUI and its Apache-2.0 foundation.
+    "bench_metrics", "collections", "derive_refineable", "gpui", "gpui_apple", "gpui_ios",
+    "gpui_linux", "gpui_macos", "gpui_macros", "gpui_platform", "gpui_shared_string",
+    "gpui_tokio", "gpui_util", "gpui_web", "gpui_wgpu", "gpui_windows", "http_client",
+    "http_client_tls", "path", "perf", "refineable", "reqwest_client", "scheduler", "sum_tree",
+    "util", "util_macros", "zlog", "ztracing", "ztracing_macro",
+]
 
 [policy]
 # Dev-dependencies of core crates that may point outside core, as "from -> to".
 allow_core_dev_deps = ["markdown -> languages"]
+# Core files with out-of-crate paths that cannot resolve in Neutron's layout, with the reason.
+allow_core_path_escapes = [
+    # A test of `fs_embed!` in dev mode reads `crates/util/src`; run util's tests with
+    # `--features debug-embed`, which upstream tests with a different path.
+    "crates/util/src/util.rs",
+]
 
 # Literals the path fixer cannot find by itself: paths resolved against the current directory,
 # or targets that are not tracked upstream.
