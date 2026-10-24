@@ -11,19 +11,19 @@ members = [
     "apps/ide/crates/agent",
     "apps/ide/crates/agent_servers",
     "apps/ide/crates/agent_settings",
-    "core/agent_skills",
+    "apps/ide/crates/agent_skills",
     "apps/ide/crates/agent_ui",
     "apps/ide/crates/agent_ui_benchmarks",
     "apps/ide/crates/ai_onboarding",
-    "core/anthropic",
+    "apps/ide/crates/anthropic",
     "core/askpass",
     "core/assets",
-    "core/audio",
+    "apps/ide/crates/audio",
     "apps/ide/crates/auto_update",
     "apps/ide/crates/auto_update_helper",
     "apps/ide/crates/auto_update_ui",
-    "core/aws_http_client",
-    "core/bedrock",
+    "apps/ide/crates/aws_http_client",
+    "apps/ide/crates/bedrock",
     "core/bench_metrics",
     "apps/ide/crates/benchmarks",
     "apps/ide/crates/breadcrumbs",
@@ -45,7 +45,7 @@ members = [
     "apps/ide/crates/command_palette_hooks",
     "core/component",
     "apps/ide/crates/component_preview",
-    "core/context_server",
+    "apps/ide/crates/context_server",
     "apps/ide/crates/copilot",
     "apps/ide/crates/copilot_chat",
     "core/crashes",
@@ -56,7 +56,7 @@ members = [
     "apps/ide/crates/debug_adapter_extension",
     "apps/ide/crates/debugger_tools",
     "apps/ide/crates/debugger_ui",
-    "core/deepseek",
+    "apps/ide/crates/deepseek",
     "apps/ide/crates/dev_container",
     "apps/ide/crates/diagnostics",
     "apps/ide/crates/docs_preprocessor",
@@ -80,14 +80,14 @@ members = [
     "apps/ide/crates/extension_host",
     "apps/ide/crates/extension_suggest",
     "apps/ide/crates/extensions_ui",
-    "core/feature_flags",
-    "core/feature_flags_macros",
+    "apps/ide/crates/feature_flags",
+    "apps/ide/crates/feature_flags_macros",
     "apps/ide/crates/feedback",
     "core/file_content",
     "apps/ide/crates/file_finder",
-    "core/file_icons",
+    "apps/ide/crates/file_icons",
     "core/fs",
-    "core/fs_benchmarks",
+    "apps/ide/crates/fs_benchmarks",
     "core/fuzzy",
     "core/fuzzy_nucleo",
     "core/git",
@@ -95,7 +95,7 @@ members = [
     "apps/ide/crates/git_ui",
     "apps/ide/crates/git_ui_core",
     "apps/ide/crates/go_to_line",
-    "core/google_ai",
+    "apps/ide/crates/google_ai",
     "core/gpui",
     "core/gpui_apple",
     "core/gpui_ios",
@@ -109,12 +109,12 @@ members = [
     "core/gpui_web",
     "core/gpui_wgpu",
     "core/gpui_windows",
-    "core/grammars",
+    "apps/ide/crates/grammars",
     "core/hang_telemetry",
-    "core/html_to_markdown",
+    "apps/ide/crates/html_to_markdown",
     "core/http_client",
     "core/http_client_tls",
-    "core/http_proxy",
+    "apps/ide/crates/http_proxy",
     "core/icons",
     "apps/ide/crates/image_viewer",
     "apps/ide/crates/input_latency_ui",
@@ -123,11 +123,11 @@ members = [
     "apps/ide/crates/journal",
     "apps/ide/crates/json_schema_store",
     "apps/ide/crates/keymap_editor",
-    "core/language",
-    "core/language_core",
-    "core/language_detection",
+    "apps/ide/crates/language",
+    "apps/ide/crates/language_core",
+    "apps/ide/crates/language_detection",
     "apps/ide/crates/language_extension",
-    "core/language_model",
+    "apps/ide/crates/language_model",
     "core/language_model_core",
     "apps/ide/crates/language_models",
     "apps/ide/crates/language_models_cloud",
@@ -138,30 +138,30 @@ members = [
     "apps/ide/crates/line_ending_selector",
     "apps/ide/crates/livekit_api",
     "apps/ide/crates/livekit_client",
-    "core/llama_cpp",
-    "core/lmstudio",
-    "core/lsp",
+    "apps/ide/crates/llama_cpp",
+    "apps/ide/crates/lmstudio",
+    "apps/ide/crates/lsp",
     "apps/ide/crates/lsp_command_selector",
     "apps/ide/crates/lsp_locations",
-    "core/markdown",
+    "apps/ide/crates/markdown",
     "apps/ide/crates/markdown_preview",
     "core/menu",
-    "core/mermaid_render",
+    "apps/ide/crates/mermaid_render",
     "core/migrator",
     "apps/ide/crates/miniprofiler_ui",
-    "core/mistral",
+    "apps/ide/crates/mistral",
     "apps/ide/crates/multi_buffer",
     "core/net",
-    "core/node_runtime",
+    "apps/ide/crates/node_runtime",
     "apps/ide/crates/notifications",
-    "core/oauth_callback_server",
-    "core/ollama",
+    "apps/ide/crates/oauth_callback_server",
+    "apps/ide/crates/ollama",
     "apps/ide/crates/onboarding",
-    "core/open_ai",
+    "apps/ide/crates/open_ai",
     "apps/ide/crates/open_path_prompt",
-    "core/open_router",
-    "core/openai_subscribed",
-    "core/opencode",
+    "apps/ide/crates/open_router",
+    "apps/ide/crates/openai_subscribed",
+    "apps/ide/crates/opencode",
     "apps/ide/crates/outline",
     "apps/ide/crates/outline_panel",
     "core/path",
@@ -176,7 +176,7 @@ members = [
     "apps/ide/crates/project_symbols",
     "apps/ide/crates/prompt_store",
     "core/proto",
-    "core/proxy_handshake",
+    "apps/ide/crates/proxy_handshake",
     "apps/ide/crates/recent_projects",
     "core/refineable",
     "core/refineable/derive_refineable",
@@ -187,10 +187,10 @@ members = [
     "apps/ide/crates/repl",
     "core/reqwest_client",
     "core/rope",
-    "core/rpc",
+    "apps/ide/crates/rpc",
     "apps/ide/crates/sandbox",
     "core/scheduler",
-    "core/schema_generator",
+    "apps/ide/crates/schema_generator",
     "apps/ide/crates/search",
     "core/session",
     "core/settings",
@@ -199,33 +199,33 @@ members = [
     "core/settings_macros",
     "apps/ide/crates/settings_profile_selector",
     "apps/ide/crates/settings_ui",
-    "core/shell_command_parser",
+    "apps/ide/crates/shell_command_parser",
     "apps/ide/crates/sidebar",
-    "core/snippet",
+    "apps/ide/crates/snippet",
     "apps/ide/crates/snippet_provider",
     "apps/ide/crates/snippets_ui",
     "core/sqlez",
     "core/sqlez_macros",
-    "core/streaming_diff",
+    "apps/ide/crates/streaming_diff",
     "core/sum_tree",
     "apps/ide/crates/svg_preview",
     "core/syntax_theme",
     "core/system_specs",
     "apps/ide/crates/tab_switcher",
     "apps/ide/crates/tabular_data_preview",
-    "core/task",
+    "apps/ide/crates/task",
     "apps/ide/crates/tasks_ui",
     "core/telemetry",
     "core/telemetry_events",
-    "core/terminal",
+    "apps/ide/crates/terminal",
     "apps/ide/crates/terminal_view",
     "core/text",
     "core/theme",
     "apps/ide/crates/theme_extension",
-    "core/theme_importer",
+    "apps/ide/crates/theme_importer",
     "apps/ide/crates/theme_selector",
     "core/theme_settings",
-    "core/time_format",
+    "apps/ide/crates/time_format",
     "apps/ide/crates/title_bar",
     "apps/ide/crates/toolchain_selector",
     "core/ui",
@@ -235,19 +235,19 @@ members = [
     "core/util",
     "core/util_macros",
     "apps/ide/crates/vim",
-    "core/vim_mode_setting",
-    "core/watch",
-    "core/web_search",
+    "apps/ide/crates/vim_mode_setting",
+    "apps/ide/crates/watch",
+    "apps/ide/crates/web_search",
     "apps/ide/crates/web_search_providers",
     "apps/ide/crates/which_key",
     "core/windows_resources",
     "apps/ide/crates/workspace",
-    "core/worktree",
-    "core/worktree_benchmarks",
-    "core/x_ai",
-    "core/x_ai_subscribed",
+    "apps/ide/crates/worktree",
+    "apps/ide/crates/worktree_benchmarks",
+    "apps/ide/crates/x_ai",
+    "apps/ide/crates/x_ai_subscribed",
     "apps/ide/crates/zed",
-    "core/zed_actions",
+    "apps/ide/crates/zed_actions",
     "core/zed_credentials_provider",
     "core/zed_env_vars",
     "core/zeta_prompt",
@@ -295,18 +295,18 @@ activity_indicator = { path = "apps/ide/crates/activity_indicator" }
 agent = { path = "apps/ide/crates/agent" }
 agent_servers = { path = "apps/ide/crates/agent_servers" }
 agent_settings = { path = "apps/ide/crates/agent_settings" }
-agent_skills = { path = "core/agent_skills" }
+agent_skills = { path = "apps/ide/crates/agent_skills" }
 agent_ui = { path = "apps/ide/crates/agent_ui" }
 ai_onboarding = { path = "apps/ide/crates/ai_onboarding" }
-anthropic = { path = "core/anthropic" }
+anthropic = { path = "apps/ide/crates/anthropic" }
 askpass = { path = "core/askpass" }
 assets = { path = "core/assets" }
-audio = { path = "core/audio" }
+audio = { path = "apps/ide/crates/audio" }
 bench_metrics = { path = "core/bench_metrics" }
 auto_update = { path = "apps/ide/crates/auto_update" }
 auto_update_ui = { path = "apps/ide/crates/auto_update_ui" }
-aws_http_client = { path = "core/aws_http_client" }
-bedrock = { path = "core/bedrock" }
+aws_http_client = { path = "apps/ide/crates/aws_http_client" }
+bedrock = { path = "apps/ide/crates/bedrock" }
 breadcrumbs = { path = "apps/ide/crates/breadcrumbs" }
 buffer_diff = { path = "apps/ide/crates/buffer_diff" }
 call = { path = "apps/ide/crates/call" }
@@ -327,7 +327,7 @@ command_palette_hooks = { path = "apps/ide/crates/command_palette_hooks" }
 compliance = { path = "tooling/compliance" }
 component = { path = "core/component" }
 component_preview = { path = "apps/ide/crates/component_preview" }
-context_server = { path = "core/context_server" }
+context_server = { path = "apps/ide/crates/context_server" }
 copilot = { path = "apps/ide/crates/copilot" }
 copilot_chat = { path = "apps/ide/crates/copilot_chat" }
 copilot_ui = { path = "apps/ide/crates/copilot_ui" }
@@ -339,7 +339,7 @@ db = { path = "core/db" }
 debug_adapter_extension = { path = "apps/ide/crates/debug_adapter_extension" }
 debugger_tools = { path = "apps/ide/crates/debugger_tools" }
 debugger_ui = { path = "apps/ide/crates/debugger_ui" }
-deepseek = { path = "core/deepseek" }
+deepseek = { path = "apps/ide/crates/deepseek" }
 derive_refineable = { path = "core/refineable/derive_refineable" }
 dev_container = { path = "apps/ide/crates/dev_container" }
 diagnostics = { path = "apps/ide/crates/diagnostics" }
@@ -357,12 +357,12 @@ extension = { path = "apps/ide/crates/extension" }
 extension_host = { path = "apps/ide/crates/extension_host" }
 extension_suggest = { path = "apps/ide/crates/extension_suggest" }
 extensions_ui = { path = "apps/ide/crates/extensions_ui" }
-feature_flags = { path = "core/feature_flags" }
-feature_flags_macros = { path = "core/feature_flags_macros" }
+feature_flags = { path = "apps/ide/crates/feature_flags" }
+feature_flags_macros = { path = "apps/ide/crates/feature_flags_macros" }
 feedback = { path = "apps/ide/crates/feedback" }
 file_content = { path = "core/file_content" }
 file_finder = { path = "apps/ide/crates/file_finder" }
-file_icons = { path = "core/file_icons" }
+file_icons = { path = "apps/ide/crates/file_icons" }
 fs = { path = "core/fs" }
 fuzzy = { path = "core/fuzzy" }
 fuzzy_nucleo = { path = "core/fuzzy_nucleo" }
@@ -371,7 +371,7 @@ git_hosting_providers = { path = "apps/ide/crates/git_hosting_providers" }
 git_ui = { path = "apps/ide/crates/git_ui" }
 git_ui_core = { path = "apps/ide/crates/git_ui_core" }
 go_to_line = { path = "apps/ide/crates/go_to_line" }
-google_ai = { path = "core/google_ai" }
+google_ai = { path = "apps/ide/crates/google_ai" }
 gpui = { path = "core/gpui", default-features = false }
 gpui_apple = { path = "core/gpui_apple" }
 gpui_ios = { path = "core/gpui_ios" }
@@ -385,12 +385,12 @@ gpui_util = { path = "core/gpui_util" }
 gpui_web = { path = "core/gpui_web", default-features = false }
 gpui_wgpu = { path = "core/gpui_wgpu" }
 gpui_windows = { path = "core/gpui_windows", default-features = false }
-grammars = { path = "core/grammars" }
+grammars = { path = "apps/ide/crates/grammars" }
 hang_telemetry = { path = "core/hang_telemetry" }
-html_to_markdown = { path = "core/html_to_markdown" }
+html_to_markdown = { path = "apps/ide/crates/html_to_markdown" }
 http_client = { path = "core/http_client" }
 http_client_tls = { path = "core/http_client_tls" }
-http_proxy = { path = "core/http_proxy" }
+http_proxy = { path = "apps/ide/crates/http_proxy" }
 icons = { path = "core/icons" }
 image_viewer = { path = "apps/ide/crates/image_viewer" }
 input_latency_ui = { path = "apps/ide/crates/input_latency_ui" }
@@ -399,11 +399,11 @@ install_cli = { path = "apps/ide/crates/install_cli" }
 journal = { path = "apps/ide/crates/journal" }
 json_schema_store = { path = "apps/ide/crates/json_schema_store" }
 keymap_editor = { path = "apps/ide/crates/keymap_editor" }
-language = { path = "core/language" }
-language_core = { path = "core/language_core" }
-language_detection = { path = "core/language_detection" }
+language = { path = "apps/ide/crates/language" }
+language_core = { path = "apps/ide/crates/language_core" }
+language_detection = { path = "apps/ide/crates/language_detection" }
 language_extension = { path = "apps/ide/crates/language_extension" }
-language_model = { path = "core/language_model" }
+language_model = { path = "apps/ide/crates/language_model" }
 language_model_core = { path = "core/language_model_core" }
 language_models = { path = "apps/ide/crates/language_models" }
 language_models_cloud = { path = "apps/ide/crates/language_models_cloud" }
@@ -414,30 +414,30 @@ languages = { path = "apps/ide/crates/languages" }
 line_ending_selector = { path = "apps/ide/crates/line_ending_selector" }
 livekit_api = { path = "apps/ide/crates/livekit_api" }
 livekit_client = { path = "apps/ide/crates/livekit_client" }
-llama_cpp = { path = "core/llama_cpp" }
-lmstudio = { path = "core/lmstudio" }
-lsp = { path = "core/lsp" }
+llama_cpp = { path = "apps/ide/crates/llama_cpp" }
+lmstudio = { path = "apps/ide/crates/lmstudio" }
+lsp = { path = "apps/ide/crates/lsp" }
 lsp_command_selector = { path = "apps/ide/crates/lsp_command_selector" }
 lsp_locations = { path = "apps/ide/crates/lsp_locations" }
-markdown = { path = "core/markdown" }
+markdown = { path = "apps/ide/crates/markdown" }
 markdown_preview = { path = "apps/ide/crates/markdown_preview" }
 menu = { path = "core/menu" }
-mermaid_render = { path = "core/mermaid_render" }
+mermaid_render = { path = "apps/ide/crates/mermaid_render" }
 migrator = { path = "core/migrator" }
 miniprofiler_ui = { path = "apps/ide/crates/miniprofiler_ui" }
-mistral = { path = "core/mistral" }
+mistral = { path = "apps/ide/crates/mistral" }
 multi_buffer = { path = "apps/ide/crates/multi_buffer" }
 net = { path = "core/net" }
-node_runtime = { path = "core/node_runtime" }
+node_runtime = { path = "apps/ide/crates/node_runtime" }
 notifications = { path = "apps/ide/crates/notifications" }
-oauth_callback_server = { path = "core/oauth_callback_server" }
-ollama = { path = "core/ollama" }
+oauth_callback_server = { path = "apps/ide/crates/oauth_callback_server" }
+ollama = { path = "apps/ide/crates/ollama" }
 onboarding = { path = "apps/ide/crates/onboarding" }
-open_ai = { path = "core/open_ai" }
+open_ai = { path = "apps/ide/crates/open_ai" }
 open_path_prompt = { path = "apps/ide/crates/open_path_prompt" }
-open_router = { path = "core/open_router", features = ["schemars"] }
-openai_subscribed = { path = "core/openai_subscribed" }
-opencode = { path = "core/opencode" }
+open_router = { path = "apps/ide/crates/open_router", features = ["schemars"] }
+openai_subscribed = { path = "apps/ide/crates/openai_subscribed" }
+opencode = { path = "apps/ide/crates/opencode" }
 outline = { path = "apps/ide/crates/outline" }
 outline_panel = { path = "apps/ide/crates/outline_panel" }
 path = { path = "core/path" }
@@ -452,7 +452,7 @@ project_panel = { path = "apps/ide/crates/project_panel" }
 project_symbols = { path = "apps/ide/crates/project_symbols" }
 prompt_store = { path = "apps/ide/crates/prompt_store" }
 proto = { path = "core/proto" }
-proxy_handshake = { path = "core/proxy_handshake" }
+proxy_handshake = { path = "apps/ide/crates/proxy_handshake" }
 recent_projects = { path = "apps/ide/crates/recent_projects" }
 refineable = { path = "core/refineable" }
 release_channel = { path = "riso/release_channel" }
@@ -463,7 +463,7 @@ repl = { path = "apps/ide/crates/repl" }
 reqwest_client = { path = "core/reqwest_client" }
 rodio = { git = "https://github.com/RustAudio/rodio", rev = "3ee9745862279ce1d18db593155016e7ce024aeb", default-features = false, features = ["wav", "playback", "wav_output", "recording"] }
 rope = { path = "core/rope" }
-rpc = { path = "core/rpc" }
+rpc = { path = "apps/ide/crates/rpc" }
 sandbox = { path = "apps/ide/crates/sandbox" }
 scheduler = { path = "core/scheduler" }
 search = { path = "apps/ide/crates/search" }
@@ -474,52 +474,52 @@ settings_json = { path = "core/settings_json", default-features = false }
 settings_macros = { path = "core/settings_macros" }
 settings_profile_selector = { path = "apps/ide/crates/settings_profile_selector" }
 settings_ui = { path = "apps/ide/crates/settings_ui" }
-shell_command_parser = { path = "core/shell_command_parser" }
+shell_command_parser = { path = "apps/ide/crates/shell_command_parser" }
 sidebar = { path = "apps/ide/crates/sidebar" }
-snippet = { path = "core/snippet" }
+snippet = { path = "apps/ide/crates/snippet" }
 snippet_provider = { path = "apps/ide/crates/snippet_provider" }
 snippets_ui = { path = "apps/ide/crates/snippets_ui" }
 sqlez = { path = "core/sqlez" }
 sqlez_macros = { path = "core/sqlez_macros" }
-streaming_diff = { path = "core/streaming_diff" }
+streaming_diff = { path = "apps/ide/crates/streaming_diff" }
 sum_tree = { path = "core/sum_tree" }
 svg_preview = { path = "apps/ide/crates/svg_preview" }
 syntax_theme = { path = "core/syntax_theme" }
 system_specs = { path = "core/system_specs" }
 tab_switcher = { path = "apps/ide/crates/tab_switcher" }
 tabular_data_preview = { path = "apps/ide/crates/tabular_data_preview"}
-task = { path = "core/task" }
+task = { path = "apps/ide/crates/task" }
 tasks_ui = { path = "apps/ide/crates/tasks_ui" }
 telemetry = { path = "core/telemetry" }
 telemetry_events = { path = "core/telemetry_events" }
-terminal = { path = "core/terminal" }
+terminal = { path = "apps/ide/crates/terminal" }
 terminal_view = { path = "apps/ide/crates/terminal_view" }
 text = { path = "core/text" }
 theme = { path = "core/theme" }
 theme_extension = { path = "apps/ide/crates/theme_extension" }
 theme_selector = { path = "apps/ide/crates/theme_selector" }
 theme_settings = { path = "core/theme_settings" }
-time_format = { path = "core/time_format" }
+time_format = { path = "apps/ide/crates/time_format" }
 title_bar = { path = "apps/ide/crates/title_bar" }
 toolchain_selector = { path = "apps/ide/crates/toolchain_selector" }
 ui = { path = "core/ui" }
 ui_input = { path = "core/ui_input" }
 ui_macros = { path = "core/ui_macros" }
 ui_prompt = { path = "apps/ide/crates/ui_prompt" }
-util = { path = "core/util" , features = ["debug-embed"] }
+util = { path = "core/util" }
 util_macros = { path = "core/util_macros" }
 vim = { path = "apps/ide/crates/vim" }
-vim_mode_setting = { path = "core/vim_mode_setting" }
-watch = { path = "core/watch" }
-web_search = { path = "core/web_search" }
+vim_mode_setting = { path = "apps/ide/crates/vim_mode_setting" }
+watch = { path = "apps/ide/crates/watch" }
+web_search = { path = "apps/ide/crates/web_search" }
 web_search_providers = { path = "apps/ide/crates/web_search_providers" }
 which_key = { path = "apps/ide/crates/which_key" }
 windows_resources = { path = "core/windows_resources" }
 workspace = { path = "apps/ide/crates/workspace" }
-worktree = { path = "core/worktree" }
-x_ai = { path = "core/x_ai" }
-x_ai_subscribed = { path = "core/x_ai_subscribed" }
-zed_actions = { path = "core/zed_actions" }
+worktree = { path = "apps/ide/crates/worktree" }
+x_ai = { path = "apps/ide/crates/x_ai" }
+x_ai_subscribed = { path = "apps/ide/crates/x_ai_subscribed" }
+zed_actions = { path = "apps/ide/crates/zed_actions" }
 zed_credentials_provider = { path = "core/zed_credentials_provider" }
 zed_env_vars = { path = "core/zed_env_vars" }
 zeta_prompt = { path = "core/zeta_prompt" }

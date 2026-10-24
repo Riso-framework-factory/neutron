@@ -1,7 +1,7 @@
 use crate::config::Config;
 use crate::upstream::Upstream;
 use anyhow::{Result, bail};
-use std::collections::HashMap;
+use std::collections::{BTreeSet, HashMap};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Destination {
@@ -40,13 +40,12 @@ impl Layout {
     pub fn new(config: &Config, upstream: &Upstream) -> Result<Self> {
         let mut rules = Vec::new();
         let mut core_destinations: HashMap<String, String> = HashMap::new();
-        let mut core_packages = Vec::new();
-        for name in &config.core.crates {
-            let Some(package) = upstream.package_named(name) else {
-                bail!("core crate `{name}` in upstream.toml is not an upstream workspace package");
-            };
-            core_packages.push(package);
-        }
+        let core_names = core_closure(config, upstream)?;
+        let core_packages: Vec<&crate::upstream::Package> = upstream
+            .packages
+            .iter()
+            .filter(|package| core_names.contains(package.name.as_str()))
+            .collect();
         for package in &core_packages {
             // A package nested in another package's directory moves with its parent.
             let Some(parent) = upstream
@@ -174,18 +173,24 @@ impl Layout {
 
     /// Neutron directories whose whole content is owned by the sync.
     pub fn managed_roots(&self) -> Vec<String> {
+        // All of `core/` is managed, not only the current crates, so that a crate leaving core does
+        // not leave its old copy behind.
         let mut roots: Vec<String> = self
             .rules
             .iter()
-            .filter(|rule| rule.destination != Destination::Shim)
+            .filter(|rule| !matches!(rule.destination, Destination::Shim | Destination::Core))
             .map(|rule| rule.to.clone())
             .collect();
+        roots.push("core".to_string());
         roots.push(self.ide_root.clone());
         roots
     }
 
     /// The destination kind of the managed directory that contains the Neutron path `path`.
     pub fn map_neutron_destination(&self, path: &str) -> Option<Destination> {
+        if strip_path_prefix(path, "core").is_some() {
+            return Some(Destination::Core);
+        }
         self.rules
             .iter()
             .filter(|rule| strip_path_prefix(path, &rule.to).is_some())
@@ -205,6 +210,42 @@ impl Layout {
             .filter(|rule| rule.destination == Destination::Core)
             .map(|rule| (rule.from.as_str(), rule.to.as_str()))
     }
+}
+
+/// Names of the upstream packages in core: the roots plus everything they depend on (normal and
+/// build dependencies), except shims, which live in `riso/`. Dependencies are followed through a
+/// shim's upstream origin because core crates call the shim with the upstream API.
+pub fn core_closure<'a>(config: &Config, upstream: &'a Upstream) -> Result<BTreeSet<&'a str>> {
+    let shim_names: BTreeSet<&str> = config.shim.keys().map(String::as_str).collect();
+    let mut core = BTreeSet::new();
+    let mut visited = BTreeSet::new();
+    let mut pending: Vec<&str> = Vec::new();
+    for root in &config.core.roots {
+        let Some(package) = upstream.package_named(root) else {
+            bail!("core root `{root}` in upstream.toml is not an upstream workspace package");
+        };
+        if shim_names.contains(package.name.as_str()) {
+            bail!("core root `{root}` is a shim; shims live in riso/");
+        }
+        pending.push(package.name.as_str());
+    }
+    while let Some(name) = pending.pop() {
+        if !visited.insert(name) {
+            continue;
+        }
+        let Some(package) = upstream.package_named(name) else {
+            continue;
+        };
+        if !shim_names.contains(name) {
+            core.insert(name);
+        }
+        for dependency in &package.dependencies {
+            if let Some(dependency) = upstream.package_named(dependency) {
+                pending.push(dependency.name.as_str());
+            }
+        }
+    }
+    Ok(core)
 }
 
 /// `Some(rest)` if `path` is `prefix` or lies inside it, comparing whole components.

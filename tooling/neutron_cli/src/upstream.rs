@@ -33,6 +33,8 @@ pub struct Package {
     pub name: String,
     /// Package directory relative to the upstream root, `/`-separated.
     pub dir: String,
+    /// Names of the normal and build dependencies (dev-dependencies excluded).
+    pub dependencies: Vec<String>,
 }
 
 impl Upstream {
@@ -214,6 +216,13 @@ struct Metadata {
 struct MetadataPackage {
     name: String,
     manifest_path: PathBuf,
+    dependencies: Vec<MetadataDependency>,
+}
+
+#[derive(Deserialize)]
+struct MetadataDependency {
+    name: String,
+    kind: Option<String>,
 }
 
 fn workspace_packages(root: &Path) -> Result<Vec<Package>> {
@@ -246,9 +255,16 @@ fn workspace_packages(root: &Path) -> Result<Vec<Package>> {
             .to_str()
             .with_context(|| format!("package {} has a non-UTF-8 path", package.name))?
             .replace('\\', "/");
+        let dependencies = package
+            .dependencies
+            .into_iter()
+            .filter(|dependency| dependency.kind.as_deref() != Some("dev"))
+            .map(|dependency| dependency.name)
+            .collect();
         packages.push(Package {
             name: package.name,
             dir,
+            dependencies,
         });
     }
     packages.sort_by(|left, right| left.dir.cmp(&right.dir));

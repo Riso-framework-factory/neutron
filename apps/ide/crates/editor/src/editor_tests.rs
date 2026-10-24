@@ -49032,7 +49032,7 @@ async fn test_tsx_nested_jsx_member_expression_highlights(cx: &mut TestAppContex
             },
             Some(tree_sitter_typescript::LANGUAGE_TSX.into()),
         )
-        .with_highlights_query(include_str!("../../../../../core/grammars/src/tsx/highlights.scm"))
+        .with_highlights_query(include_str!("../../grammars/src/tsx/highlights.scm"))
         .unwrap(),
     );
 

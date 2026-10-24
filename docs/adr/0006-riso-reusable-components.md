@@ -12,5 +12,6 @@ editor, terminal or agent.
 - Zed's `workspace` is not forked as a whole. Its small, project-free files (`status_bar.rs`,
   `toolbar.rs`, `modal_layer.rs`, `toast_layer.rs`, `dock.rs`) are taken into `riso_shell` with a
   per-file origin so they keep receiving upstream changes; `pane.rs`/`item.rs` come last.
-- Engine crates in `core/` (`language`, `markdown`, `terminal`, AI SDKs) stay available as libraries.
+- Core holds only what the framework builds on (ADR 0007); engines such as `language`, `markdown`,
+  `terminal` and the AI SDKs stay in `apps/ide`.
 - Components contain no hard-coded UI strings, branding or domain logic.
