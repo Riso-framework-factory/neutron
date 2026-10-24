@@ -89,7 +89,10 @@ pub fn run(
                     let (fixed, file_rewrites) = fixer.fix_source(&file.path, text);
                     if !file_rewrites.is_empty() {
                         content = fixed.into_bytes();
-                        rewrites.extend(file_rewrites);
+                        rewrites.extend(file_rewrites.into_iter().map(|rewrite| Rewrite {
+                            neutron_path: mapped.path.clone(),
+                            ..rewrite
+                        }));
                     }
                 }
                 Entry::File {
@@ -115,7 +118,7 @@ pub fn run(
         ),
         (
             format!("{}/AGENTS.md", layout.ide_root()),
-            agents::ide_notice(upstream).into_bytes(),
+            agents::ide_notice().into_bytes(),
         ),
     ];
     for (path, content) in generated {
