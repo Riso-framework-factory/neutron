@@ -67,6 +67,9 @@ crates = [
     "http_proxy", "node_runtime", "oauth_callback_server", "proxy_handshake", "session",
     "shell_command_parser", "snippet", "streaming_diff", "system_specs", "time_format", "watch",
     "windows_resources", "zed_actions", "zed_credentials_provider",
+    # B5: text, language and terminal engines.
+    "grammars", "language", "language_core", "language_detection", "lsp", "markdown", "rpc",
+    "task", "terminal", "worktree", "worktree_benchmarks",
 ]
 
 # Riso crates that keep an upstream crate's name and replace it everywhere. The first sync copies
@@ -89,6 +92,9 @@ allow_core_path_escapes = [
     # A test of `fs_embed!` in dev mode reads `crates/util/src`; run util's tests with
     # `--features debug-embed`, which upstream tests with a different path.
     "crates/util/src/util.rs",
+    # Dev builds would read tree-sitter queries from `crates/grammars/src`; neutron.workspace.toml
+    # enables `util/debug-embed` so they are embedded instead.
+    "crates/grammars/src/grammars.rs",
 ]
 
 # Literals the path fixer cannot find by itself: paths resolved against the current directory,

@@ -8,7 +8,7 @@ use language_core::{LanguageConfig, LanguageQueries, QueryFile, QueryFileContent
 util::fs_embed! {
     struct GrammarDir,
     crate_relative = "src/",
-    root_relative = "apps/ide/crates/grammars/src",
+    root_relative = "crates/grammars/src",
     exclude = ["*.rs"],
 }
 

@@ -109,7 +109,7 @@ members = [
     "core/gpui_web",
     "core/gpui_wgpu",
     "core/gpui_windows",
-    "apps/ide/crates/grammars",
+    "core/grammars",
     "core/hang_telemetry",
     "core/html_to_markdown",
     "core/http_client",
@@ -123,9 +123,9 @@ members = [
     "apps/ide/crates/journal",
     "apps/ide/crates/json_schema_store",
     "apps/ide/crates/keymap_editor",
-    "apps/ide/crates/language",
-    "apps/ide/crates/language_core",
-    "apps/ide/crates/language_detection",
+    "core/language",
+    "core/language_core",
+    "core/language_detection",
     "apps/ide/crates/language_extension",
     "apps/ide/crates/language_model",
     "core/language_model_core",
@@ -140,10 +140,10 @@ members = [
     "apps/ide/crates/livekit_client",
     "apps/ide/crates/llama_cpp",
     "apps/ide/crates/lmstudio",
-    "apps/ide/crates/lsp",
+    "core/lsp",
     "apps/ide/crates/lsp_command_selector",
     "apps/ide/crates/lsp_locations",
-    "apps/ide/crates/markdown",
+    "core/markdown",
     "apps/ide/crates/markdown_preview",
     "core/menu",
     "core/mermaid_render",
@@ -187,7 +187,7 @@ members = [
     "apps/ide/crates/repl",
     "core/reqwest_client",
     "core/rope",
-    "apps/ide/crates/rpc",
+    "core/rpc",
     "apps/ide/crates/sandbox",
     "core/scheduler",
     "core/schema_generator",
@@ -213,11 +213,11 @@ members = [
     "core/system_specs",
     "apps/ide/crates/tab_switcher",
     "apps/ide/crates/tabular_data_preview",
-    "apps/ide/crates/task",
+    "core/task",
     "apps/ide/crates/tasks_ui",
     "core/telemetry",
     "core/telemetry_events",
-    "apps/ide/crates/terminal",
+    "core/terminal",
     "apps/ide/crates/terminal_view",
     "core/text",
     "core/theme",
@@ -242,8 +242,8 @@ members = [
     "apps/ide/crates/which_key",
     "core/windows_resources",
     "apps/ide/crates/workspace",
-    "apps/ide/crates/worktree",
-    "apps/ide/crates/worktree_benchmarks",
+    "core/worktree",
+    "core/worktree_benchmarks",
     "apps/ide/crates/x_ai",
     "apps/ide/crates/x_ai_subscribed",
     "apps/ide/crates/zed",
@@ -384,7 +384,7 @@ gpui_util = { path = "core/gpui_util" }
 gpui_web = { path = "core/gpui_web", default-features = false }
 gpui_wgpu = { path = "core/gpui_wgpu" }
 gpui_windows = { path = "core/gpui_windows", default-features = false }
-grammars = { path = "apps/ide/crates/grammars" }
+grammars = { path = "core/grammars" }
 hang_telemetry = { path = "core/hang_telemetry" }
 html_to_markdown = { path = "core/html_to_markdown" }
 http_client = { path = "core/http_client" }
@@ -398,9 +398,9 @@ install_cli = { path = "apps/ide/crates/install_cli" }
 journal = { path = "apps/ide/crates/journal" }
 json_schema_store = { path = "apps/ide/crates/json_schema_store" }
 keymap_editor = { path = "apps/ide/crates/keymap_editor" }
-language = { path = "apps/ide/crates/language" }
-language_core = { path = "apps/ide/crates/language_core" }
-language_detection = { path = "apps/ide/crates/language_detection" }
+language = { path = "core/language" }
+language_core = { path = "core/language_core" }
+language_detection = { path = "core/language_detection" }
 language_extension = { path = "apps/ide/crates/language_extension" }
 language_model = { path = "apps/ide/crates/language_model" }
 language_model_core = { path = "core/language_model_core" }
@@ -415,10 +415,10 @@ livekit_api = { path = "apps/ide/crates/livekit_api" }
 livekit_client = { path = "apps/ide/crates/livekit_client" }
 llama_cpp = { path = "apps/ide/crates/llama_cpp" }
 lmstudio = { path = "apps/ide/crates/lmstudio" }
-lsp = { path = "apps/ide/crates/lsp" }
+lsp = { path = "core/lsp" }
 lsp_command_selector = { path = "apps/ide/crates/lsp_command_selector" }
 lsp_locations = { path = "apps/ide/crates/lsp_locations" }
-markdown = { path = "apps/ide/crates/markdown" }
+markdown = { path = "core/markdown" }
 markdown_preview = { path = "apps/ide/crates/markdown_preview" }
 menu = { path = "core/menu" }
 mermaid_render = { path = "core/mermaid_render" }
@@ -462,7 +462,7 @@ repl = { path = "apps/ide/crates/repl" }
 reqwest_client = { path = "core/reqwest_client" }
 rodio = { git = "https://github.com/RustAudio/rodio", rev = "3ee9745862279ce1d18db593155016e7ce024aeb", default-features = false, features = ["wav", "playback", "wav_output", "recording"] }
 rope = { path = "core/rope" }
-rpc = { path = "apps/ide/crates/rpc" }
+rpc = { path = "core/rpc" }
 sandbox = { path = "apps/ide/crates/sandbox" }
 scheduler = { path = "core/scheduler" }
 search = { path = "apps/ide/crates/search" }
@@ -487,11 +487,11 @@ syntax_theme = { path = "core/syntax_theme" }
 system_specs = { path = "core/system_specs" }
 tab_switcher = { path = "apps/ide/crates/tab_switcher" }
 tabular_data_preview = { path = "apps/ide/crates/tabular_data_preview"}
-task = { path = "apps/ide/crates/task" }
+task = { path = "core/task" }
 tasks_ui = { path = "apps/ide/crates/tasks_ui" }
 telemetry = { path = "core/telemetry" }
 telemetry_events = { path = "core/telemetry_events" }
-terminal = { path = "apps/ide/crates/terminal" }
+terminal = { path = "core/terminal" }
 terminal_view = { path = "apps/ide/crates/terminal_view" }
 text = { path = "core/text" }
 theme = { path = "core/theme" }
@@ -505,7 +505,7 @@ ui = { path = "core/ui" }
 ui_input = { path = "core/ui_input" }
 ui_macros = { path = "core/ui_macros" }
 ui_prompt = { path = "apps/ide/crates/ui_prompt" }
-util = { path = "core/util" }
+util = { path = "core/util" , features = ["debug-embed"] }
 util_macros = { path = "core/util_macros" }
 vim = { path = "apps/ide/crates/vim" }
 vim_mode_setting = { path = "core/vim_mode_setting" }
@@ -515,7 +515,7 @@ web_search_providers = { path = "apps/ide/crates/web_search_providers" }
 which_key = { path = "apps/ide/crates/which_key" }
 windows_resources = { path = "core/windows_resources" }
 workspace = { path = "apps/ide/crates/workspace" }
-worktree = { path = "apps/ide/crates/worktree" }
+worktree = { path = "core/worktree" }
 x_ai = { path = "apps/ide/crates/x_ai" }
 x_ai_subscribed = { path = "apps/ide/crates/x_ai_subscribed" }
 zed_actions = { path = "core/zed_actions" }

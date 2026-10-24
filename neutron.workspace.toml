@@ -8,6 +8,9 @@ exclude = ["tooling/neutron_cli"]
 
 [manifest.workspace.dependencies]
 riso_identity = { path = "riso/identity" }
+# Embed `fs_embed!` files in debug builds too. Upstream reads them at runtime from paths such as
+# `crates/grammars/src`, which do not exist in Neutron's layout (docs/known-issues.md).
+util = { features = ["debug-embed"] }
 
 # Merged into .cargo/config.toml.
 [cargo-config.alias]

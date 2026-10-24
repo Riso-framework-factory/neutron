@@ -15,11 +15,18 @@ affected because it keeps the `crates/` directory.
 - Fix: upstream PR deriving the crate from the path component before `/src/`. Until then, the
   options are to accept it or to shim `gpui_util`.
 
-## `util` fs_embed test needs `debug-embed`
+## Debug builds embed assets instead of reading the checkout
 
-`util`'s test of `fs_embed!` in dev mode reads `crates/util/src` from the repository root.
-Run util's tests with `--features util/debug-embed`. Allowed in `upstream.toml`
-(`policy.allow_core_path_escapes`).
+Upstream's `util::fs_embed!` makes debug builds read files at runtime from the repository root
+plus a `crates/...` path (`grammars` uses `crates/grammars/src`, `util`'s own test uses
+`crates/util/src`). Those paths do not exist in Neutron's layout, and core cannot be rewritten, so
+`neutron.workspace.toml` enables `util/debug-embed` for the whole workspace. Debug builds then
+embed these files at compile time.
+
+- Effect: editing a file in `assets/` or a tree-sitter query needs a rebuild to show up, unlike in
+  Zed's own checkout.
+- Without it: debug builds panic at startup with "missing cpp/semantic_token_rules.json".
+- Fix: upstream PR so `root_relative` does not assume `crates/`.
 
 ## Flaky under load
 
