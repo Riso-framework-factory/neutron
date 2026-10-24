@@ -3,17 +3,18 @@
 Problems that come from running Zed's crates in Neutron's layout, and test results that differ
 from upstream. Each entry says how to recognize it and what fixes it.
 
-## `log_err()` loses the crate name outside `crates/`
+## `log_err()` cannot be filtered by crate outside `crates/`
 
-`gpui_util::log_error_with_caller` derives the log target from the caller's file path by splitting
-at `"crates/"` (upstream assumes every crate lives in a `crates` directory). Errors logged with
-`.log_err()` from `core/`, `riso/`, `crate/` or `apps/<app>/` get an empty target, so log lines lose
-their crate name and cannot be filtered by module. Logging itself still works. `apps/ide` is not
-affected because it keeps the `crates/` directory.
+`gpui_util::log_error_with_caller` derives the log target and module path from the caller's file by
+splitting at `"crates/"` (upstream assumes every crate lives in a `crates` directory). For callers in
+`core/`, `riso/`, `crate/` or `apps/<app>/` both come out empty. `zlog` then falls back to the file
+path, so the line still names the crate (`ERROR [core/gpui/src/app.rs:123] ...`), and errors are
+enabled by default, so nothing is lost. `apps/ide` keeps `crates/` and is not affected.
 
+- Effect: per-crate log filters (`RUST_LOG=gpui=off`, the `log` setting) do not apply to errors
+  logged with `.log_err()` from those directories.
 - Symptom: `gpui_util` test `logging_tests::logging_preserves_diagnostics_and_callers` fails.
-- Fix: upstream PR deriving the crate from the path component before `/src/`. Until then, the
-  options are to accept it or to shim `gpui_util`.
+- Fix: upstream PR deriving the crate from the path component before `/src/`. Not worth a shim.
 
 ## Debug builds embed assets instead of reading the checkout
 
