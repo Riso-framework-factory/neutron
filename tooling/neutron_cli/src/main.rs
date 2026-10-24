@@ -45,6 +45,9 @@ enum Command {
     Sync(SyncArgs),
     /// Check that Neutron matches upstream and follows its dependency rules.
     Verify(VerifyArgs),
+    /// Run `verify`, then type-check core, shims and riso with all targets and the IDE canary.
+    /// Run it before merging a sync pull request.
+    Doctor(DoctorArgs),
     /// Print `-p <crate>` arguments for every workspace crate in the given groups.
     Members {
         #[arg(required = true, value_enum)]
@@ -78,6 +81,15 @@ struct SyncArgs {
 }
 
 #[derive(Args)]
+struct DoctorArgs {
+    #[command(flatten)]
+    upstream: UpstreamArgs,
+    /// Skip `cargo check -p zed`, the slowest step.
+    #[arg(long)]
+    skip_ide: bool,
+}
+
+#[derive(Args)]
 struct VerifyArgs {
     #[command(flatten)]
     upstream: UpstreamArgs,
@@ -104,6 +116,7 @@ fn run(cli: Cli) -> Result<ExitCode> {
     match cli.command {
         Command::Sync(arguments) => sync_command(&root, arguments),
         Command::Verify(arguments) => verify_command(&root, arguments),
+        Command::Doctor(arguments) => doctor_command(&root, arguments),
         Command::Members { groups } => members_command(&root, &groups),
     }
 }
@@ -195,6 +208,62 @@ fn verify_command(root: &Path, arguments: VerifyArgs) -> Result<ExitCode> {
     }
 }
 
+fn doctor_command(root: &Path, arguments: DoctorArgs) -> Result<ExitCode> {
+    let verified = verify_command(
+        root,
+        VerifyArgs {
+            upstream: UpstreamArgs {
+                upstream: arguments.upstream.upstream,
+                allow_dirty: arguments.upstream.allow_dirty,
+            },
+            append_report: None,
+        },
+    )?;
+    if verified != ExitCode::SUCCESS {
+        return Ok(verified);
+    }
+
+    let config = Config::load(root)?;
+    let packages = verify::neutron_packages(root, &HashSet::new())?;
+    let mut check = vec!["check".to_string(), "--all-targets".to_string()];
+    let mut names: Vec<&str> = packages
+        .values()
+        .filter(|package| matches!(package.group, Group::Core | Group::Riso))
+        .map(|package| package.name.as_str())
+        .collect();
+    names.sort_unstable();
+    for name in names {
+        check.push("-p".to_string());
+        check.push(name.to_string());
+    }
+    for feature in &config.doctor.check_features {
+        check.push("--features".to_string());
+        check.push(feature.clone());
+    }
+    let mut steps = vec![("core, shims and riso", check)];
+    if !arguments.skip_ide {
+        steps.push((
+            "IDE canary",
+            vec!["check".to_string(), "-p".to_string(), "zed".to_string()],
+        ));
+    }
+
+    for (label, cargo_arguments) in steps {
+        println!("doctor: cargo check ({label})");
+        let status = std::process::Command::new("cargo")
+            .current_dir(root)
+            .args(&cargo_arguments)
+            .status()
+            .context("running cargo")?;
+        if !status.success() {
+            println!("doctor: cargo check ({label}) failed");
+            return Ok(ExitCode::FAILURE);
+        }
+    }
+    println!("doctor: ok");
+    Ok(ExitCode::SUCCESS)
+}
+
 fn members_command(root: &Path, groups: &[Group]) -> Result<ExitCode> {
     // Shims are recognized by their upstream crate names, which only upstream.toml's core list
     // and the riso directory tell us without an upstream checkout; treat every riso crate as riso.
@@ -265,7 +334,23 @@ fn sync_report(
         .filter(|change| change.destination == Some(Destination::Core))
         .map(|change| change.path.as_str())
         .collect();
-    writeln!(report, "- Core files changed: {}", core_changes.len())?;
+    let mut core_crates: Vec<&str> = core_changes
+        .iter()
+        .filter_map(|path| path.strip_prefix("core/"))
+        .filter_map(|path| path.split('/').next())
+        .collect();
+    core_crates.dedup();
+    writeln!(
+        report,
+        "- Core files changed: {} in {} crate(s){}",
+        core_changes.len(),
+        core_crates.len(),
+        if core_crates.is_empty() {
+            String::new()
+        } else {
+            format!(": {}", core_crates.join(", "))
+        }
+    )?;
 
     if !outcome.conflicts.is_empty() {
         writeln!(report, "\n## Shim conflicts\n")?;

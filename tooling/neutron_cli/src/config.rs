@@ -22,6 +22,16 @@ pub struct Config {
     /// Crates in `riso/` that keep an upstream crate's name and replace it everywhere.
     #[serde(default)]
     pub shim: BTreeMap<String, ShimSection>,
+    #[serde(default)]
+    pub doctor: DoctorSection,
+}
+
+#[derive(Debug, Default, Deserialize)]
+pub struct DoctorSection {
+    /// Features `cargo neutron doctor` enables when checking core, for upstream crates whose tests
+    /// only build when another workspace crate enables a feature.
+    #[serde(default)]
+    pub check_features: Vec<String>,
 }
 
 #[derive(Debug, Clone, Deserialize)]

@@ -118,3 +118,7 @@ sections = ["Rust coding guidelines", "Timers in tests", "GPUI", "Rules Hygiene"
 # Zed's PR review workflow asks agents to edit README.md on every change; it does not apply here.
 drop_lines_containing = ["Remove this line to confirm you've reviewed this PR"]
 skills = ["gpui-test", "gpui-bench", "lint-creator"]
+
+[doctor]
+# `clock`'s tests only build with this feature (docs/known-issues.md).
+check_features = ["clock/test-support"]

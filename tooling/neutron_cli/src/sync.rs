@@ -54,7 +54,7 @@ pub fn run(
     layout: &Layout,
     dry_run: bool,
 ) -> Result<SyncOutcome> {
-    let mut warnings = Vec::new();
+    let mut warnings = crate_changes_since(upstream, layout, &config.upstream.commit)?;
     let mut rewrites = Vec::new();
     let mut plan: BTreeMap<String, PlannedEntry> = BTreeMap::new();
     let fixer = PathFixer::new(upstream, layout, &config.rewrite.literals);
@@ -237,6 +237,51 @@ pub fn run(
         warnings,
         conflicts,
     })
+}
+
+/// Upstream crates added or removed since the previously synced commit. New crates land in the
+/// IDE mirror by default, so someone has to decide whether they belong in core.
+fn crate_changes_since(
+    upstream: &Upstream,
+    layout: &Layout,
+    previous: &str,
+) -> Result<Vec<String>> {
+    if previous.is_empty() || previous == upstream.commit {
+        return Ok(Vec::new());
+    }
+    // An unknown previous commit (for example after a force-push upstream) just skips the report.
+    let Ok(previous_files) = upstream.files_at(previous, ".") else {
+        return Ok(Vec::new());
+    };
+    let previous_directories: BTreeSet<&str> = previous_files
+        .iter()
+        .filter_map(|path| path.strip_suffix("/Cargo.toml"))
+        .collect();
+    let current_directories: BTreeSet<&str> = upstream
+        .packages
+        .iter()
+        .map(|package| package.dir.as_str())
+        .collect();
+
+    let mut notes = Vec::new();
+    for directory in current_directories.difference(&previous_directories) {
+        let destination = layout
+            .map(directory)
+            .map_or_else(|| "nowhere (excluded)".to_string(), |mapped| mapped.path);
+        notes.push(format!(
+            "new upstream crate `{directory}` was mirrored to `{destination}`; classify it in upstream.toml"
+        ));
+    }
+    for directory in previous_directories.difference(&current_directories) {
+        // Only workspace packages count; nested fixtures and benchmarks also have a Cargo.toml.
+        if upstream.exists(directory) {
+            continue;
+        }
+        notes.push(format!(
+            "upstream crate `{directory}` was removed; drop it from upstream.toml if it is listed there"
+        ));
+    }
+    Ok(notes)
 }
 
 fn add_entry(

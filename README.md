@@ -44,6 +44,19 @@ cargo run --manifest-path tooling/neutron_cli/Cargo.toml -- sync --upstream ../z
 cargo neutron verify --upstream ../zed
 ```
 
+### Reviewing the daily sync pull request
+
+`.github/workflows/upstream-sync.yml` opens or updates one pull request from the `sync/upstream`
+branch every day. Its description is the sync report. It is never merged automatically:
+
+1. Read the labels and the report. `sync-triage` means new upstream crates to classify in
+   `upstream.toml`, or a `verify` finding; `sync-conflict` means a shim in `riso/` has conflict
+   markers to resolve.
+2. Check out the branch and the upstream commit named in its `Upstream-Commit:` trailer, then run
+   `cargo neutron doctor --upstream ../zed`. It runs `verify`, then `cargo check --all-targets`
+   on core, shims and riso, then `cargo check -p zed` for the IDE canary.
+3. Merge when `doctor` passes.
+
 Run the mirrored IDE with an isolated data directory so it does not touch an installed Zed:
 
 ```sh
