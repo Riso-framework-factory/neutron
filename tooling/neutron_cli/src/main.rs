@@ -290,10 +290,27 @@ fn summarize(outcome: &SyncOutcome) -> String {
         .count();
     let deleted = outcome.changes.len() - written;
     format!(
-        "{written} file(s) written, {deleted} deleted, {} path literal(s) rewritten, {} warning(s)",
+        "{written} file(s) written, {deleted} deleted, {} warning(s); {} path literal(s) rewritten \
+         across the mirror, {} of them in files this sync changed",
+        outcome.warnings.len(),
         outcome.rewrites.len(),
-        outcome.warnings.len()
+        rewrites_in_changed_files(outcome).len()
     )
+}
+
+/// Rewrites in files that this sync wrote. The others were already applied by an earlier sync.
+fn rewrites_in_changed_files(outcome: &SyncOutcome) -> Vec<&rewrite::Rewrite> {
+    let changed: HashSet<&str> = outcome
+        .changes
+        .iter()
+        .filter(|change| change.kind == ChangeKind::Write)
+        .map(|change| change.path.as_str())
+        .collect();
+    outcome
+        .rewrites
+        .iter()
+        .filter(|rewrite| changed.contains(rewrite.neutron_path.as_str()))
+        .collect()
 }
 
 fn sync_report(
@@ -364,12 +381,13 @@ fn sync_report(
             writeln!(report, "- {warning}")?;
         }
     }
-    if !outcome.rewrites.is_empty() {
+    let changed_rewrites = rewrites_in_changed_files(outcome);
+    if !changed_rewrites.is_empty() {
         writeln!(
             report,
-            "\n<details><summary>Path literals rewritten</summary>\n"
+            "\n<details><summary>Path literals rewritten in changed files</summary>\n"
         )?;
-        for rewrite in &outcome.rewrites {
+        for rewrite in changed_rewrites {
             writeln!(
                 report,
                 "- `{}`: `{}` → `{}`",

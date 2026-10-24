@@ -22,7 +22,10 @@ static ROOT_RELATIVE_LITERAL: LazyLock<Regex> =
 
 #[derive(Debug, Clone)]
 pub struct Rewrite {
+    /// The upstream file.
     pub file: String,
+    /// Where the file lives in Neutron; set by the sync.
+    pub neutron_path: String,
     pub from: String,
     pub to: String,
 }
@@ -120,6 +123,7 @@ impl<'a> PathFixer<'a> {
                 copied_up_to = candidate.range.end;
                 rewrites.push(Rewrite {
                     file: file.to_string(),
+                    neutron_path: String::new(),
                     from: literal.to_string(),
                     to: replacement,
                 });

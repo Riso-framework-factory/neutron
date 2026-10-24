@@ -27,9 +27,9 @@ pub fn root_agents(
         String::from_utf8(upstream.read(".rules")?).context("upstream .rules is not UTF-8")?;
     let available = split_sections(&rules);
 
-    let mut block = format!(
-        "\n_Synced from `.rules` at zed@{}. Paths point at their Neutron locations._\n",
-        upstream.short_commit()
+    let mut block = String::from(
+        "\n_Synced from Zed's `.rules` at the commit recorded in `upstream.toml`. Paths point at \
+         their Neutron locations._\n",
     );
     for wanted in sections {
         match available.iter().find(|(title, _)| title == wanted) {
@@ -109,15 +109,15 @@ pub fn skill_files(
     Ok(files)
 }
 
-pub fn ide_notice(upstream: &Upstream) -> String {
-    format!(
+pub fn ide_notice() -> String {
+    String::from(
         "# apps/ide is generated\n\n\
-         This directory mirrors `zed-industries/zed` at `{}`, written by `cargo neutron sync`.\n\
+         This directory mirrors `zed-industries/zed` at the commit recorded in `upstream.toml`,\n\
+         written by `cargo neutron sync`.\n\
          Paths that point outside the mirror (for example into `assets/` or `core/`) are rewritten\n\
          to their Neutron locations.\n\n\
          It exists only to prove that `core/` and the shims in `riso/` still build the full Zed.\n\
          Do not edit files here and do not depend on its crates: the next sync overwrites every change.\n",
-        upstream.commit
     )
 }
 
