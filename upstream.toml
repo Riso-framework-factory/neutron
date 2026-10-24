@@ -1,5 +1,5 @@
-# Where every upstream Zed path goes in Neutron. `cargo neutron sync` reads this file; the
-# porting plan describes how crates move from `apps/ide` into `core` in closed batches.
+# Where every upstream Zed path goes in Neutron. `cargo neutron sync` reads this file. Core is the
+# dependency closure of `[core] roots` (docs/adr/0007); everything else is mirrored into `apps/ide`.
 
 [upstream]
 repo = "https://github.com/zed-industries/zed"
