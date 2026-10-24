@@ -5,8 +5,8 @@
 repo = "https://github.com/zed-industries/zed"
 ref = "main"
 # Written by `cargo neutron sync`.
-commit = ""
-commit_date = ""
+commit = "9f305aaf88370e8ca39c702242186e3d8f97ecca"
+commit_date = "2026-10-23"
 
 [layout]
 # Destination of every upstream path that no rule below maps: the IDE canary.
