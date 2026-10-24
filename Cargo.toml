@@ -273,6 +273,7 @@ members = [
     "core/perf",
     "tooling/xtask",
     "riso/identity",
+    "riso/log",
 ]
 default-members = ["apps/ide/crates/zed"]
 exclude = ["tooling/neutron_cli"]
@@ -1015,6 +1016,7 @@ yawc = { version = "0.4", default-features = false }
 zeroize = "1.8"
 zstd = { version = "0.13", default-features = false, features = ["legacy", "arrays"] }
 riso_identity = { path = "riso/identity" }
+riso_log = { path = "riso/log" }
 
 [workspace.dependencies.windows]
 version = "0.62"

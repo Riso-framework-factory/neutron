@@ -1,0 +1,22 @@
+[package]
+name = "riso_log"
+version = "0.1.0"
+edition.workspace = true
+publish.workspace = true
+license = "GPL-3.0-or-later"
+description = "Installs zlog so that errors logged with log_err() keep their crate in Neutron's layout"
+
+[lints]
+workspace = true
+
+[lib]
+path = "src/riso_log.rs"
+doctest = false
+
+[dependencies]
+anyhow.workspace = true
+log.workspace = true
+zlog.workspace = true
+
+[dev-dependencies]
+gpui_util.workspace = true

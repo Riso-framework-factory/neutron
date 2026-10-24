@@ -14,7 +14,10 @@ enabled by default, so nothing is lost. `apps/ide` keeps `crates/` and is not af
 - Effect: per-crate log filters (`RUST_LOG=gpui=off`, the `log` setting) do not apply to errors
   logged with `.log_err()` from those directories.
 - Symptom: `gpui_util` test `logging_tests::logging_preserves_diagnostics_and_callers` fails.
-- Fix: upstream PR deriving the crate from the path component before `/src/`. Not worth a shim.
+- Fixed for Neutron apps: call `riso_log::init()` instead of `zlog::init()`. It installs a logger
+  that fills the empty target in from the file path (the directory that contains `src/`) and
+  forwards to `zlog`. The crate name is the directory name, so `riso/identity` logs as `identity`.
+- Still worth an upstream PR, which would also make the failing test pass.
 
 ## Debug builds embed assets instead of reading the checkout
 

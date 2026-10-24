@@ -3,11 +3,12 @@
 
 # Merged into the root Cargo.toml.
 [manifest.workspace]
-members = ["riso/identity"]
+members = ["riso/identity", "riso/log"]
 exclude = ["tooling/neutron_cli"]
 
 [manifest.workspace.dependencies]
 riso_identity = { path = "riso/identity" }
+riso_log = { path = "riso/log" }
 # Embed `fs_embed!` files in debug builds too. Upstream reads them at runtime from paths such as
 # `crates/grammars/src`, which do not exist in Neutron's layout (docs/known-issues.md).
 util = { features = ["debug-embed"] }

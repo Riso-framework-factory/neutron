@@ -15377,6 +15377,16 @@ name = "riso_identity"
 version = "0.1.0"
 
 [[package]]
+name = "riso_log"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "gpui_util",
+ "log",
+ "zlog",
+]
+
+[[package]]
 name = "rle-decode-fast"
 version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
