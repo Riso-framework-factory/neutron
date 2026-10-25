@@ -4,7 +4,7 @@ use crate::layout::{Destination, Layout, strip_path_prefix};
 use crate::manifest::{self, Overlay};
 use crate::rewrite::{PathFixer, Rewrite};
 use crate::upstream::{FileKind, Upstream};
-use crate::{lockfile, shim};
+use crate::{lockfile, riso, shim};
 use anyhow::{Context as _, Result, bail};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -46,8 +46,10 @@ pub struct SyncOutcome {
     pub changes: Vec<Change>,
     pub rewrites: Vec<Rewrite>,
     pub warnings: Vec<String>,
-    /// Shim files left with conflict markers or needing a decision.
+    /// Shim and riso files left with conflict markers or needing a decision.
     pub conflicts: Vec<String>,
+    /// Watch-mode riso files with upstream commits still to port.
+    pub pending: Vec<riso::PendingFile>,
 }
 
 pub fn run(
@@ -78,9 +80,10 @@ pub fn run(
                 let target = upstream.read_link(&file.path)?;
                 let target = match mapped.destination {
                     Destination::Core => target,
-                    Destination::Root | Destination::Ide | Destination::Shim => {
-                        fixer.fix_symlink(&file.path, &target).unwrap_or(target)
-                    }
+                    Destination::Root
+                    | Destination::Ide
+                    | Destination::Shim
+                    | Destination::Riso => fixer.fix_symlink(&file.path, &target).unwrap_or(target),
                 };
                 Entry::Symlink { target }
             }
@@ -229,6 +232,16 @@ pub fn run(
         }
     }
 
+    let riso_outcome = riso::sync(root, upstream, &config.riso.files, dry_run)?;
+    changes.extend(riso_outcome.log.changes);
+    conflicts.extend(riso_outcome.log.conflicts);
+    warnings.extend(riso_outcome.warnings);
+    if !dry_run {
+        for (path, base) in &riso_outcome.new_bases {
+            Config::record_riso_base(root, path, base)?;
+        }
+    }
+
     // Last, because the root manifest and shim manifests decide which members the lock holds.
     if lockfile::sync(root, upstream, dry_run)? {
         changes.push(Change {
@@ -243,6 +256,7 @@ pub fn run(
         rewrites,
         warnings,
         conflicts,
+        pending: riso_outcome.pending,
     })
 }
 

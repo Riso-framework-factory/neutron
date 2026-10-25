@@ -7,7 +7,9 @@ mod config;
 mod layout;
 mod lockfile;
 mod manifest;
+mod merge;
 mod rewrite;
+mod riso;
 mod shim;
 mod sync;
 mod upstream;
@@ -52,6 +54,29 @@ enum Command {
     Members {
         #[arg(required = true, value_enum)]
         groups: Vec<Group>,
+    },
+    /// Mark a riso file (by path) or a shim (by name) as in step with the upstream checkout, after
+    /// porting its upstream changes or resolving a merge conflict by hand.
+    Ack {
+        #[command(flatten)]
+        upstream: UpstreamArgs,
+        /// Paths of `[[riso.files]]` entries or names of `[shim.*]` entries.
+        #[arg(required = true)]
+        targets: Vec<String>,
+    },
+    /// Files in `riso/` taken from upstream.
+    Riso {
+        #[command(subcommand)]
+        command: RisoCommand,
+    },
+}
+
+#[derive(Subcommand)]
+enum RisoCommand {
+    /// Show each riso file's origin, mode, base and the upstream commits waiting since its base.
+    Status {
+        #[command(flatten)]
+        upstream: UpstreamArgs,
     },
 }
 
@@ -118,7 +143,68 @@ fn run(cli: Cli) -> Result<ExitCode> {
         Command::Verify(arguments) => verify_command(&root, arguments),
         Command::Doctor(arguments) => doctor_command(&root, arguments),
         Command::Members { groups } => members_command(&root, &groups),
+        Command::Ack { upstream, targets } => ack_command(&root, upstream, &targets),
+        Command::Riso {
+            command: RisoCommand::Status { upstream },
+        } => riso_status_command(&root, upstream),
     }
+}
+
+fn ack_command(root: &Path, arguments: UpstreamArgs, targets: &[String]) -> Result<ExitCode> {
+    let config = Config::load(root)?;
+    let upstream = Upstream::load(&arguments.upstream, arguments.allow_dirty)?;
+    for target in targets {
+        let path = target.trim_end_matches('/');
+        if config.riso.files.iter().any(|file| file.path == path) {
+            let text =
+                fs::read_to_string(root.join(path)).with_context(|| format!("reading {path}"))?;
+            if text.lines().any(|line| line.starts_with("<<<<<<< ")) {
+                bail!("{path} still has conflict markers");
+            }
+            Config::record_riso_base(root, path, &upstream.commit)?;
+        } else if config.shim.contains_key(path) {
+            Config::record_shim_base(root, path, &upstream.commit)?;
+        } else {
+            bail!("{target} is neither a [[riso.files]] path nor a [shim.*] name");
+        }
+        println!("{path}: base = zed@{}", upstream.short_commit());
+    }
+    Ok(ExitCode::SUCCESS)
+}
+
+fn riso_status_command(root: &Path, arguments: UpstreamArgs) -> Result<ExitCode> {
+    let config = Config::load(root)?;
+    let upstream = Upstream::load(&arguments.upstream, arguments.allow_dirty)?;
+    riso::validate(&config.riso.files)?;
+    if config.riso.files.is_empty() {
+        println!("no [[riso.files]] entries");
+    }
+    for file in &config.riso.files {
+        let mode = match file.mode {
+            config::RisoMode::Merge => "merge",
+            config::RisoMode::Watch => "watch",
+        };
+        let base = file.base.get(..10).unwrap_or(&file.base);
+        let state = if !root.join(&file.path).exists() {
+            "not copied yet; run `cargo neutron sync`".to_string()
+        } else if upstream.tracked_file(&file.origin).is_none() {
+            "origin no longer exists upstream".to_string()
+        } else {
+            let commits = riso::commits_touching(&upstream, &file.base, &file.origin)?;
+            match (commits.len(), file.mode) {
+                (0, _) => "up to date".to_string(),
+                (count, config::RisoMode::Merge) => {
+                    format!("{count} upstream commit(s), merged by the next sync")
+                }
+                (count, config::RisoMode::Watch) => format!("{count} upstream commit(s) to port"),
+            }
+        };
+        println!(
+            "{:<48} {mode:<5} base {base:<10} {:<48} {state}",
+            file.path, file.origin
+        );
+    }
+    Ok(ExitCode::SUCCESS)
 }
 
 fn find_root() -> Result<PathBuf> {
@@ -369,8 +455,27 @@ fn sync_report(
         }
     )?;
 
+    if !outcome.pending.is_empty() {
+        writeln!(report, "\n## Riso files to port (watch mode)\n")?;
+        writeln!(
+            report,
+            "Port the changes that matter, then run `cargo neutron ack <path>`.\n"
+        )?;
+        for pending in &outcome.pending {
+            writeln!(
+                report,
+                "- `{}` ← `{}`: {} commit(s)",
+                pending.path,
+                pending.origin,
+                pending.commits.len()
+            )?;
+            for commit in pending.commits.iter().take(20) {
+                writeln!(report, "  - {commit}")?;
+            }
+        }
+    }
     if !outcome.conflicts.is_empty() {
-        writeln!(report, "\n## Shim conflicts\n")?;
+        writeln!(report, "\n## Merge conflicts\n")?;
         for conflict in &outcome.conflicts {
             writeln!(report, "- {conflict}")?;
         }
