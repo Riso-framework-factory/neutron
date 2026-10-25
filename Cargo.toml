@@ -272,6 +272,7 @@ members = [
     "tooling/compliance",
     "core/perf",
     "tooling/xtask",
+    "riso/actions",
     "riso/identity",
     "riso/log",
 ]
@@ -1015,6 +1016,7 @@ yaml-rust2 = { version = "0.8", default-features = false }
 yawc = { version = "0.4", default-features = false }
 zeroize = "1.8"
 zstd = { version = "0.13", default-features = false, features = ["legacy", "arrays"] }
+riso_actions = { path = "riso/actions" }
 riso_identity = { path = "riso/identity" }
 riso_log = { path = "riso/log" }
 

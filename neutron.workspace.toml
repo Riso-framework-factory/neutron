@@ -3,10 +3,11 @@
 
 # Merged into the root Cargo.toml.
 [manifest.workspace]
-members = ["riso/identity", "riso/log"]
+members = ["riso/actions", "riso/identity", "riso/log"]
 exclude = ["tooling/neutron_cli"]
 
 [manifest.workspace.dependencies]
+riso_actions = { path = "riso/actions" }
 riso_identity = { path = "riso/identity" }
 riso_log = { path = "riso/log" }
 
