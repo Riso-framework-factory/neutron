@@ -1,7 +1,7 @@
 # crate/
 
 Shared components of your product. A crate here implements traits from `riso/` (for example a
-`StatusItem` or a `Panel`) or provides product logic used by several apps in `apps/`.
+`StatusItemView` or a `Panel`) or provides product logic used by several apps in `apps/`.
 
 Log with the `log` macros and `.log_err()`; never install a logger here, the app does that with
 `riso_log::init()`.

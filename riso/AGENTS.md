@@ -9,17 +9,22 @@ Two kinds of crates live here:
 
 ## Component conventions
 
-1. A component is a base plus slot or delegate traits (`StatusBar` + `trait StatusItem`,
+1. A component is a base plus slot or delegate traits (`StatusBar` + `trait StatusItemView`,
    `Picker<D: PickerDelegate>`). Default trait methods must be good enough that an instance only
    writes what differs.
 2. No hard-coded UI strings, branding or domain logic: text, icons and actions come from the instance.
-3. Component settings go through `riso_settings`, one namespace per component.
+3. Reuse a settings key from core's `settings_content` when it already fits (`tabs`, `tab_bar`,
+   `status_bar`, `toolbar`, `title_bar`…); new settings go through `riso_settings`, one namespace per
+   component.
 4. A component declares its actions and default keymap; the app decides whether to load the keymap.
 5. Implement `component::Component` so the component shows up in the gallery.
 6. Every component has at least one instance in `apps/examples/*`.
 
 ## Files taken from Zed
 
+- Keep Zed's type and module names (`Workspace`, `Pane`, `Item`, `StatusItemView`…) and remove only
+  the IDE-specific parts: no renames, reformatting or reordering of upstream code. Small diffs are what
+  lets `cargo neutron sync` keep merging upstream changes (ADR 0008).
 - Record the origin and base commit in `upstream.toml` so `cargo neutron sync` can 3-way merge
   upstream changes into the file.
 - Keep the "Modified from zed@<sha>, <date>" header (GPLv3 §5(a)); `cargo neutron verify` checks it.

@@ -11,7 +11,7 @@ anything; the sections between the `upstream` markers below are synced from Zed'
    to Zed; if it cannot wait, add a shim or take the file into `riso/` and record its origin in
    `upstream.toml`.
 2. A reusable UI component that knows nothing about a product goes in `riso/` as a base plus traits
-   (for example `StatusBar` + `trait StatusItem`). See `riso/AGENTS.md`.
+   (for example `StatusBar` + `trait StatusItemView`). See `riso/AGENTS.md`.
 3. A concrete component shared by the apps of one product goes in `crate/`, implementing the traits
    from `riso/`.
 4. Entry points, wiring and business logic go in `apps/<app>/`.

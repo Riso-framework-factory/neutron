@@ -4,7 +4,7 @@ Status: accepted (2026-10-24)
 
 ## Decision
 `riso/` provides reusable components as a base plus traits (for example `StatusBar` and
-`trait StatusItem`, `Picker<D: PickerDelegate>`). `crate/` provides concrete items for a product and
+`trait StatusItemView`, `Picker<D: PickerDelegate>`; type names follow Zed, see ADR 0008). `crate/` provides concrete items for a product and
 `apps/<app>` creates and wires the instances. Riso does not build specific features such as an
 editor, terminal or agent.
 
