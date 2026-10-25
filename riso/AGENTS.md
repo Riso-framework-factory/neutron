@@ -25,7 +25,15 @@ Two kinds of crates live here:
 - Keep Zed's type and module names (`Workspace`, `Pane`, `Item`, `StatusItemView`…) and remove only
   the IDE-specific parts: no renames, reformatting or reordering of upstream code. Small diffs are what
   lets `cargo neutron sync` keep merging upstream changes (ADR 0008).
-- Record the origin and base commit in `upstream.toml` so `cargo neutron sync` can 3-way merge
-  upstream changes into the file.
-- Keep the "Modified from zed@<sha>, <date>" header (GPLv3 §5(a)); `cargo neutron verify` checks it.
-- Keep the diff from upstream small; never depend on crates in `apps/ide`.
+- Declare every file taken from Zed in `[[riso.files]]` (`path`, `origin`, `mode = "merge"` or
+  `"watch"`) and let `cargo neutron sync` copy it; do not copy files by hand. Use `merge` when the
+  file only loses a few lines, `watch` when it changes a lot.
+- After resolving a merge conflict or porting a watch-mode file's upstream changes, run
+  `cargo neutron ack <path> --upstream <zed checkout>`; `cargo neutron riso status` shows what is
+  waiting.
+- Keep the "Modified from Zed (...) for Neutron, <date>" header the sync writes (GPLv3 §5(a));
+  `cargo neutron verify` checks it (V7).
+- No Zed branding in strings and no `zed_actions` (V10): text comes from the instance or
+  `riso_identity`, shared actions from `riso_actions`.
+- Never depend on crates in `apps/ide`.
+- The `neutron-component` skill walks through the whole procedure.

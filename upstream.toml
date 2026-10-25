@@ -75,6 +75,8 @@ roots = [
     "fuzzy", "fuzzy_nucleo",
     # Windows executable resources for bundling.
     "windows_resources",
+    # Input latency overlay, used as is by riso_devtools.
+    "input_latency_ui",
 ]
 
 # Riso crates that keep an upstream crate's name and replace it everywhere. The first sync copies
