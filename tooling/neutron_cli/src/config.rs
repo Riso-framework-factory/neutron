@@ -24,6 +24,36 @@ pub struct Config {
     pub shim: BTreeMap<String, ShimSection>,
     #[serde(default)]
     pub doctor: DoctorSection,
+    #[serde(default)]
+    pub riso: RisoSection,
+}
+
+#[derive(Debug, Default, Deserialize)]
+pub struct RisoSection {
+    /// Files in `riso/` taken from upstream, each with the upstream file it follows.
+    #[serde(default)]
+    pub files: Vec<RisoFile>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct RisoFile {
+    /// Neutron path, under `riso/`.
+    pub path: String,
+    /// Upstream path the file was taken from.
+    pub origin: String,
+    pub mode: RisoMode,
+    /// Upstream commit the file was last merged with or reviewed against.
+    #[serde(default)]
+    pub base: String,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum RisoMode {
+    /// Upstream changes are 3-way merged on every sync.
+    Merge,
+    /// Upstream changes are only reported; someone ports them and runs `cargo neutron ack`.
+    Watch,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -131,6 +161,29 @@ impl Config {
         let text =
             fs::read_to_string(&path).with_context(|| format!("reading {}", path.display()))?;
         toml::from_str(&text).with_context(|| format!("parsing {}", path.display()))
+    }
+
+    /// Records the upstream commit a riso file was last merged with or reviewed against.
+    pub fn record_riso_base(root: &Path, riso_path: &str, base: &str) -> Result<()> {
+        let path = root.join(CONFIG_FILE);
+        let text =
+            fs::read_to_string(&path).with_context(|| format!("reading {}", path.display()))?;
+        let mut document = text
+            .parse::<toml_edit::DocumentMut>()
+            .with_context(|| format!("parsing {}", path.display()))?;
+        let files = document["riso"]["files"]
+            .as_array_of_tables_mut()
+            .context("`[[riso.files]]` must be an array of tables")?;
+        let table = files
+            .iter_mut()
+            .find(|table| table.get("path").and_then(|item| item.as_str()) == Some(riso_path))
+            .with_context(|| format!("no [[riso.files]] entry with path {riso_path}"))?;
+        set_string_keeping_decor(table, "base", base);
+        let updated = document.to_string();
+        if updated != text {
+            fs::write(&path, updated).with_context(|| format!("writing {}", path.display()))?;
+        }
+        Ok(())
     }
 
     /// Records the upstream commit a shim was last merged with.

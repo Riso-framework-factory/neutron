@@ -120,6 +120,9 @@ pub fn run(
     check_conflict_markers(root, &mut findings)?;
     check_logger_initialization(root, layout, &mut findings)?;
     check_modification_headers(root, config, upstream, &mut findings)?;
+    check_riso_headers(root, config, &mut findings);
+    check_brand_strings(root, config, &mut findings)?;
+    check_ignored_sync_output(root, layout, &mut findings)?;
     Ok(findings)
 }
 
@@ -339,6 +342,121 @@ fn check_logger_initialization(
                     });
                 }
             }
+        }
+    }
+    Ok(())
+}
+
+/// V7: every file taken from upstream into a `riso_*` crate keeps its "Modified from Zed" header.
+fn check_riso_headers(root: &Path, config: &Config, findings: &mut Vec<Finding>) {
+    for file in &config.riso.files {
+        let Ok(text) = fs::read_to_string(root.join(&file.path)) else {
+            continue;
+        };
+        if !text
+            .lines()
+            .take(10)
+            .any(|line| line.contains(crate::riso::HEADER_MARKER))
+        {
+            findings.push(Finding {
+                code: "V7",
+                message: format!(
+                    "{} is taken from {} but has no \"{} ...\" header in its first lines",
+                    file.path,
+                    file.origin,
+                    crate::riso::HEADER_MARKER
+                ),
+            });
+        }
+    }
+}
+
+static BRAND_STRING: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
+    regex::Regex::new(
+        r#""[^"\n]*(\bZed\b|zed\.dev|dev\.zed)[^"\n]*"|\bzed_actions::|namespace\s*=\s*zed\b"#,
+    )
+    .expect("valid regex")
+});
+
+/// V10: riso crates show no Zed branding to an app's users (string literals, Zed's action
+/// namespace) and do not reach for `zed_actions`. Shims are exempt: they keep Zed's API.
+fn check_brand_strings(root: &Path, config: &Config, findings: &mut Vec<Finding>) -> Result<()> {
+    let riso = root.join("riso");
+    if !riso.is_dir() {
+        return Ok(());
+    }
+    let shim_directories: Vec<PathBuf> = config.shim.keys().map(|name| riso.join(name)).collect();
+    let walker = WalkDir::new(&riso).into_iter().filter_entry(|entry| {
+        entry.file_name() != "target" && !shim_directories.iter().any(|shim| shim == entry.path())
+    });
+    for entry in walker {
+        let entry = entry.with_context(|| format!("walking {}", riso.display()))?;
+        if !entry.file_type().is_file()
+            || entry
+                .path()
+                .extension()
+                .is_none_or(|extension| extension != "rs")
+        {
+            continue;
+        }
+        let Ok(text) = fs::read_to_string(entry.path()) else {
+            continue;
+        };
+        let relative = entry
+            .path()
+            .strip_prefix(root)
+            .ok()
+            .and_then(Path::to_str)
+            .unwrap_or_default()
+            .replace('\\', "/");
+        for (index, line) in text.lines().enumerate() {
+            if line.trim_start().starts_with("//") {
+                continue;
+            }
+            if let Some(found) = BRAND_STRING.find(line) {
+                findings.push(Finding {
+                    code: "V10",
+                    message: format!(
+                        "{relative}:{}: `{}` shows Zed branding or uses zed_actions; take text from the instance or riso_identity, actions from riso_actions",
+                        index + 1,
+                        found.as_str()
+                    ),
+                });
+            }
+        }
+    }
+    Ok(())
+}
+
+/// V12: files the sync writes into managed directories must not be ignored by git, or they never
+/// reach the repository (upstream force-adds a few files that its own .gitignore matches).
+fn check_ignored_sync_output(
+    root: &Path,
+    layout: &Layout,
+    findings: &mut Vec<Finding>,
+) -> Result<()> {
+    let managed = layout.managed_roots();
+    let mut arguments = vec![
+        "ls-files",
+        "--others",
+        "--ignored",
+        "--exclude-standard",
+        "-z",
+        "--",
+    ];
+    arguments.extend(managed.iter().map(String::as_str));
+    let listing = crate::upstream::git(root, &arguments)?;
+    for path in listing.split('\0').filter(|path| !path.is_empty()) {
+        let preserved = path
+            .split('/')
+            .any(|part| matches!(part, "target" | "node_modules" | ".DS_Store"));
+        if !preserved {
+            findings.push(Finding {
+                code: "V12",
+                message: format!(
+                    "{path} comes from upstream but git ignores it; run `git add -f {path}`"
+                ),
+            });
         }
     }
     Ok(())

@@ -14,6 +14,8 @@ pub enum Destination {
     /// A Neutron-owned crate in `riso/` that keeps the upstream name; upstream changes are
     /// 3-way merged into it instead of being copied.
     Shim,
+    /// A file in a `riso_*` crate taken from one upstream file (`[[riso.files]]`).
+    Riso,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

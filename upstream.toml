@@ -75,6 +75,8 @@ roots = [
     "fuzzy", "fuzzy_nucleo",
     # Windows executable resources for bundling.
     "windows_resources",
+    # Input latency overlay, used as is by riso_devtools.
+    "input_latency_ui",
 ]
 
 # Riso crates that keep an upstream crate's name and replace it everywhere. The first sync copies
@@ -118,3 +120,13 @@ skills = ["gpui-test", "gpui-bench", "lint-creator"]
 [doctor]
 # `clock`'s tests only build with this feature (docs/known-issues.md).
 check_features = ["clock/test-support"]
+
+# Files in `riso_*` crates taken from upstream. The first sync copies the origin with a "Modified from
+# Zed" header; `merge` files then get upstream changes 3-way merged, `watch` files only get them
+# reported until someone ports them and runs `cargo neutron ack <path>`.
+[[riso.files]]
+# Only the actions that are not about the IDE (editor, git, agent, project…) are kept.
+path = "riso/actions/src/riso_actions.rs"
+origin = "crates/zed_actions/src/lib.rs"
+mode = "watch"
+base = "d93bf740852672fb299fcbdba3af1d5fd0253e92"

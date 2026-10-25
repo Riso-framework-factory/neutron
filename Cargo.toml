@@ -117,7 +117,7 @@ members = [
     "apps/ide/crates/http_proxy",
     "core/icons",
     "apps/ide/crates/image_viewer",
-    "apps/ide/crates/input_latency_ui",
+    "core/input_latency_ui",
     "apps/ide/crates/inspector_ui",
     "apps/ide/crates/install_cli",
     "apps/ide/crates/journal",
@@ -272,6 +272,7 @@ members = [
     "tooling/compliance",
     "core/perf",
     "tooling/xtask",
+    "riso/actions",
     "riso/identity",
     "riso/log",
 ]
@@ -393,7 +394,7 @@ http_client_tls = { path = "core/http_client_tls" }
 http_proxy = { path = "apps/ide/crates/http_proxy" }
 icons = { path = "core/icons" }
 image_viewer = { path = "apps/ide/crates/image_viewer" }
-input_latency_ui = { path = "apps/ide/crates/input_latency_ui" }
+input_latency_ui = { path = "core/input_latency_ui" }
 inspector_ui = { path = "apps/ide/crates/inspector_ui" }
 install_cli = { path = "apps/ide/crates/install_cli" }
 journal = { path = "apps/ide/crates/journal" }
@@ -1015,6 +1016,7 @@ yaml-rust2 = { version = "0.8", default-features = false }
 yawc = { version = "0.4", default-features = false }
 zeroize = "1.8"
 zstd = { version = "0.13", default-features = false, features = ["legacy", "arrays"] }
+riso_actions = { path = "riso/actions" }
 riso_identity = { path = "riso/identity" }
 riso_log = { path = "riso/log" }
 

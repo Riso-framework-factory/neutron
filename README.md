@@ -50,8 +50,9 @@ cargo neutron verify --upstream ../zed
 branch every day. Its description is the sync report. It is never merged automatically:
 
 1. Read the labels and the report. `sync-triage` means new upstream crates to classify in
-   `upstream.toml`, or a `verify` finding; `sync-conflict` means a shim in `riso/` has conflict
-   markers to resolve.
+   `upstream.toml`, crates moving in or out of core, or a `verify` finding; `sync-conflict` means a
+   shim or riso file has conflict markers to resolve. "Riso files to port" lists upstream commits
+   for watch-mode files in `riso/`; port what matters and run `cargo neutron ack <path>`.
 2. Check out the branch and the upstream commit named in its `Upstream-Commit:` trailer, then run
    `cargo neutron doctor --upstream ../zed`. It runs `verify`, then `cargo check --all-targets`
    on core, shims and riso, then `cargo check -p zed` for the IDE canary.

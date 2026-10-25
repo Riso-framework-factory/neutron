@@ -1,0 +1,20 @@
+[package]
+name = "riso_actions"
+version = "0.1.0"
+edition.workspace = true
+publish.workspace = true
+license = "GPL-3.0-or-later"
+description = "Actions shared by Neutron's components and apps, taken from Zed's zed_actions"
+
+[lints]
+workspace = true
+
+[lib]
+path = "src/riso_actions.rs"
+doctest = false
+
+[dependencies]
+gpui.workspace = true
+schemars.workspace = true
+serde.workspace = true
+util.workspace = true

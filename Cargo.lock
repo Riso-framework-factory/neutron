@@ -15373,6 +15373,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "riso_actions"
+version = "0.1.0"
+dependencies = [
+ "gpui",
+ "schemars 1.0.4",
+ "serde",
+ "util",
+]
+
+[[package]]
 name = "riso_identity"
 version = "0.1.0"
 
