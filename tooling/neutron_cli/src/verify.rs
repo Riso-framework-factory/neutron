@@ -122,6 +122,7 @@ pub fn run(
     check_modification_headers(root, config, upstream, &mut findings)?;
     check_riso_headers(root, config, &mut findings);
     check_brand_strings(root, config, &mut findings)?;
+    check_ignored_sync_output(root, layout, &mut findings)?;
     Ok(findings)
 }
 
@@ -422,6 +423,40 @@ fn check_brand_strings(root: &Path, config: &Config, findings: &mut Vec<Finding>
                     ),
                 });
             }
+        }
+    }
+    Ok(())
+}
+
+/// V12: files the sync writes into managed directories must not be ignored by git, or they never
+/// reach the repository (upstream force-adds a few files that its own .gitignore matches).
+fn check_ignored_sync_output(
+    root: &Path,
+    layout: &Layout,
+    findings: &mut Vec<Finding>,
+) -> Result<()> {
+    let managed = layout.managed_roots();
+    let mut arguments = vec![
+        "ls-files",
+        "--others",
+        "--ignored",
+        "--exclude-standard",
+        "-z",
+        "--",
+    ];
+    arguments.extend(managed.iter().map(String::as_str));
+    let listing = crate::upstream::git(root, &arguments)?;
+    for path in listing.split('\0').filter(|path| !path.is_empty()) {
+        let preserved = path
+            .split('/')
+            .any(|part| matches!(part, "target" | "node_modules" | ".DS_Store"));
+        if !preserved {
+            findings.push(Finding {
+                code: "V12",
+                message: format!(
+                    "{path} comes from upstream but git ignores it; run `git add -f {path}`"
+                ),
+            });
         }
     }
     Ok(())
